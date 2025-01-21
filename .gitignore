@@ -1,0 +1,62 @@
+# Node.js dependencies
+/node_modules/
+/build/
+/dist/
+/yarn.lock
+/package-lock.json
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+
+# Environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Build outputs
+/build/
+*.cache
+/public/static/
+*.hot-update.*
+
+# Test coverage reports
+/coverage/
+
+# Temp files
+/tmp
+*.tmp
+*.temp
+
+# React-specific
+/src/setupProxy.js
+/src/__mocks__/
+/src/serviceWorker.js
+
+# Other generated files
+*.bak
+*.backup
+*.orig
+*.rej
+
+# Miscellaneous
+*.log
+*.gz
+
+.DS_Store
+
+*.DS_Store
