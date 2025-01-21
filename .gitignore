@@ -1,62 +1,38 @@
-# Node.js dependencies
-/node_modules/
-/build/
-/dist/
-/yarn.lock
-/package-lock.json
-
-# Logs
-logs
+# Root-level ignores
+node_modules/
 *.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# OS-specific files
+*.tmp
+*.temp
+*.gz
+*.bak
+*.backup
+*.orig
+*.rej
 .DS_Store
 Thumbs.db
-
-# Editor files
 .vscode/
 .idea/
-*.swp
 
-# Environment files
+# Backend-specific ignores
+backend/node_modules/
+backend/src/.env
+backend/src/*.log
+backend/src/tmp/
+backend/src/coverage/
+backend/src/dist/
+backend/src/build/
+
+# Teacher-tool-specific ignores
+teacher-tool/node_modules/
+teacher-tool/build/
+teacher-tool/dist/
+teacher-tool/coverage/
+teacher-tool/public/static/
+teacher-tool/*.hot-update.*
+
+# Common environment files
 .env
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
-
-# Build outputs
-/build/
-*.cache
-/public/static/
-*.hot-update.*
-
-# Test coverage reports
-/coverage/
-
-# Temp files
-/tmp
-*.tmp
-*.temp
-
-# React-specific
-/src/setupProxy.js
-/src/__mocks__/
-/src/serviceWorker.js
-
-# Other generated files
-*.bak
-*.backup
-*.orig
-*.rej
-
-# Miscellaneous
-*.log
-*.gz
-
-.DS_Store
-
-*.DS_Store
