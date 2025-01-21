@@ -1,0 +1,28 @@
+{
+	"compilerOptions": {
+		"module": "commonjs",
+		"target": "es6",
+		"baseUrl": "./",
+		"moduleResolution": "node",
+		"resolveJsonModule": true,
+		"paths": {
+			"@configs/*": ["./configs/*"],
+			"@constants/*": ["./constants/*"],
+			"@controllers/*": ["./controllers/*"],
+			"@database/*": ["./database/*"],
+			"@db/*": ["./db/*"],
+			"@dtos/*": ["./dtos/*"],
+			"@generics/*": ["./generics/*"],
+			"@health-checks/*": ["./health-checks/*"],
+			"@helpers/*": ["./helpers/*"],
+			"@middlewares/*": ["./middlewares/*"],
+			"@public/*": ["./public/*"],
+			"@routes/*": ["./routes/*"],
+			"@scripts/*": ["./scripts/*"],
+			"@services/*": ["./services/*"],
+			"@validators/*": ["./validators/*"],
+			"@utils/*": ["./utils/*"]
+		}
+	},
+	"exclude": ["node_modules"]
+}

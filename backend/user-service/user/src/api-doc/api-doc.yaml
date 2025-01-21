@@ -1,0 +1,5931 @@
+openapi: 3.0.0
+info:
+  title: Elevate User
+  version: 1.0.0
+  termsOfService: https://github.com/project-sunbird/sunbird-commons/blob/master/LICENSE
+  description: >-
+    - The Users Service is a centralized Service to support other services. Apis
+    perform operations related to mentoring entities notification etc 
+
+    - The URL for Users API(s) is `{context}/user/v1` - <b>Note:</b> These
+    resources can be used in other services
+  contact:
+    email: info@sunbird.org
+servers:
+  - url: http://localhost:3002
+    description: local dev
+  - url: https://dev.elevate-apis.shikshalokam.org
+    description: dev server
+paths:
+  /user/v1/account/create:
+    post:
+      summary: Create user
+      tags:
+        - User APIs
+      description: |-
+        This Api is associated with Create User on mentoring 
+         - Then Endpoint for creating user `/user/v1/account/create` 
+         - It is mandatory to provide values for parameter marked with `required` 
+         - Mandatory parameter cannot be empty or null
+      requestBody:
+        required: true
+        description: Request body consist of metadata and accepts payload as JSON
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/user/userCreateUserRequest'
+      responses:
+        '200':
+          description: OK. User created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user/userCreateUserResponse'
+        '400':
+          description: Bad Request. OTP is invalid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user/userCreateUser400Response'
+        '406':
+          description: Not Acceptable. User already exists.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user/userCreateUser406Exist'
+  /user/v1/account/login:
+    post:
+      summary: Login
+      tags:
+        - User APIs
+      description: |
+        This API is associated with logging in a user.
+        - Endpoint for logging in a user: `/user/v1/account/login`
+        - It is mandatory to provide values for parameters marked as `required`.
+        - Mandatory parameters cannot be empty or null.
+      requestBody:
+        description: Request body for user login
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/user/userLoginRequest'
+      responses:
+        '200':
+          description: OK. User successfully logged in.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user/userLoginResponse'
+        '400':
+          description: Bad Request. Invalid email or password.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user/userLoginResponse400'
+  /user/v1/account/acceptTermsAndCondition:
+    patch:
+      summary: Terms & Condition
+      tags:
+        - Depreciated APIs
+      description: >
+        This API sets the 'email_verified' field to true using only the
+        X-auth-token.
+
+        - Endpoint: `/user/v1/account/acceptTermsAndCondition`
+
+        - Requires a valid X-auth-token from the login API response.
+      parameters:
+        - name: X-auth-token
+          in: header
+          description: >-
+            To make use of the API, you require X-auth-token. This is Available
+            in login API Response.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK. Terms and conditions accepted successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user/acceptTermsAndConditionResponse'
+        '400':
+          description: Bad Request. User does not exist or invalid input.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user/acceptTermsAndConditionResponse400'
+  /user/v1/account/generateToken:
+    post:
+      summary: Generate Access Token
+      tags:
+        - User APIs
+      description: >
+        This API is for re-login and generating an access token from a refresh
+        token.
+
+        - Endpoint for generating token `/user/v1/account/generateToken`
+
+        - Mandatory parameters marked as `required` must have valid values.
+
+        - Parameters cannot be empty or null.
+      parameters:
+        - name: X-auth-token
+          in: header
+          description: >-
+            To use the API, you require X-auth-token, available in the login API
+            response.
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/user/generateTokenRequest'
+      responses:
+        '200':
+          description: OK. Access token generated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user/generateTokenResponse200'
+        '400':
+          description: Bad Request. Invalid input or missing required parameters.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user/generateTokenResponse400'
+        '401':
+          description: Unauthorized. X-auth-token is either missing or invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user/generateTokenResponse401'
+        '500':
+          description: Internal Server Error. Something went wrong on the server.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user/generateTokenResponse500'
+  /user/v1/account/generateOtp:
+    post:
+      summary: Generate OTP
+      tags:
+        - User APIs
+      description: |
+        This API is for generating OTP.
+        - Endpoint: `/user/v1/account/generateOtp`
+        - Mandatory parameters marked as `required` must have valid values.
+        - Parameters cannot be empty or null.
+      parameters:
+        - name: X-auth-token
+          in: header
+          description: >-
+            To make use of the API, you require X-auth-token. This is Available
+            in login API Response.
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/user/genrateOtpRequest'
+      responses:
+        '200':
+          description: OK. OTP generated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user/generateOtpResponse200'
+        '400':
+          description: Bad Request. Invalid input or missing required parameters.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user/generateOtpResponse400'
+        '500':
+          description: Internal Server Error. Something went wrong on the server.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user/generateOtpResponse500'
+  /user/v1/account/resetPassword:
+    post:
+      summary: Reset Password
+      tags:
+        - User APIs
+      description: |
+        This API is for resetting the user password.
+        - Endpoint: `/user/v1/account/resetPassword`
+        - Mandatory parameters marked as `required` must have valid values.
+        - Parameters cannot be empty or null.
+      parameters:
+        - name: X-auth-token
+          in: header
+          description: >-
+            To make use of the API, you require X-auth-token. This is Available
+            in login API Response.
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/user/resetPasswordRequest'
+      responses:
+        '200':
+          description: OK. Password reset successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user/resetPasswordResponse200'
+        '400':
+          description: Bad Request. Invalid input or missing required parameters.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user/resetPasswordResponse400'
+        '401':
+          description: Unauthorized. X-auth-token is either missing or invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user/resetPasswordResponse401'
+  /user/v1/account/logout:
+    post:
+      summary: Logout
+      tags:
+        - User APIs
+      description: |
+        This API is for logging out a user.
+        - Endpoint: `/user/v1/account/logout`
+        - Mandatory parameters marked as `required` must have valid values.
+        - Parameters cannot be empty or null.
+      parameters:
+        - name: X-auth-token
+          in: header
+          description: >-
+            To make use of the API, you require X-auth-token. This is Available
+            in login API Response.
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/user/logoutRequest'
+      responses:
+        '200':
+          description: OK. Logout successful.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user/logoutResponse200'
+        '400':
+          description: Bad Request. Invalid input or missing required parameters.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user/logoutResponse400'
+        '401':
+          description: Unauthorized. X-auth-token is either missing or invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user/logoutResponse401'
+  /user/v1/account/registrationOtp:
+    post:
+      summary: Registration OTP
+      tags:
+        - User APIs
+      description: |
+        This API is for registration OTP.
+        - Endpoint: `/user/v1/account/registrationOtp`
+        - Mandatory parameters marked as `required` must have valid values.
+        - Parameters cannot be empty or null.
+      parameters:
+        - name: X-auth-token
+          in: header
+          description: >-
+            To make use of the API, you require X-auth-token. This is Available
+            in login API Response.
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/user/registrationOtpRequest'
+      responses:
+        '200':
+          description: OK. Registration OTP sent successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user/registrationOtpResponse200'
+        '400':
+          description: Bad Request. Invalid input or missing required parameters.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user/registrationOtp400Response'
+        '406':
+          description: Not Acceptable. User already exists.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user/userCreateUser406Exist'
+  /user/v1/account/list:
+    get:
+      summary: List user
+      tags:
+        - Users APIs
+      description: |
+        This API lists users based on specified conditions.
+        - Endpoint: `/user/v1/account/list`
+        - Mandatory parameters marked as `required` must have valid values.
+        - Parameters cannot be empty or null.
+      parameters:
+        - name: X-auth-token
+          in: header
+          description: >-
+            To make use of the API, you require X-auth-token. This is Available
+            in login API Response.
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: userType
+          description: Type of user
+          required: true
+          schema:
+            type: string
+          example: mentor
+        - in: query
+          name: page
+          description: Page number for pagination.
+          required: false
+          schema:
+            type: number
+          example: 1
+        - in: query
+          name: limit
+          description: Number of records to limit.
+          required: false
+          schema:
+            type: number
+          example: 2
+        - in: query
+          name: search
+          description: Search for name or title of user, etc.
+          required: false
+          schema:
+            type: string
+          example: john
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user/userList200Response'
+  /user/v1/account/search:
+    get:
+      summary: Search User
+      tags:
+        - Users APIs
+      description: |
+        This API searches users based on specified conditions.
+        - Endpoint: `/user/v1/account/search`
+        - Mandatory parameters marked as `required` must have valid values.
+        - Parameters cannot be empty or null.
+      parameters:
+        - name: X-auth-token
+          in: header
+          description: >-
+            To use the API, you require an X-auth-token, available in the login API response.
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: type
+          description: Valid user types like mentee, mentor, session_manager, org_admin, reviewer. Use the keyword `all` to search users without passing specific roles.
+          required: true
+          schema:
+            type: string
+          example: mentor
+        - in: query
+          name: page
+          description: Page number for pagination.
+          required: false
+          schema:
+            type: number
+          example: 1
+        - in: query
+          name: limit
+          description: Number of records to limit.
+          required: false
+          schema:
+            type: number
+          example: 2
+        - in: query
+          name: search
+          description: Search for the name or title of the user, etc.
+          required: false
+          schema:
+            type: string
+          example: john
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_ids:
+                  description: A list of user IDs to include in the search.
+                  type: array
+                  items:
+                    type: string
+                email_ids:
+                  description: A list of email IDs to include in the search.
+                  type: array
+                  items:
+                    type: string
+                excluded_user_ids:
+                  description: A list of user IDs to exclude from the search.
+                  type: array
+                  items:
+                    type: string
+            examples:
+              example1:
+                summary: Example with specific users and emails
+                description: >
+                  This example searches for specific users by their IDs and email IDs, while excluding certain users.
+                value:
+                  user_ids: ['user1', 'user2']
+                  email_ids: ['user1@example.com', 'user2@example.com']
+                  excluded_user_ids: ['user3', 'user4']
+              example2:
+                summary: Example with empty body
+                description: >
+                  This example does not filter by user IDs or email IDs.
+                value: {}
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user/userList200Response'
+
+  /user/v1/user/read/{userId}:
+    get:
+      summary: User Details
+      tags:
+        - Users APIs
+      description: |
+        This API retrieves details of a user's profile.
+        - Endpoint: `/user/v1/user/read/{userId}`
+        - Mandatory parameters marked as `required` must have valid values.
+        - Parameters cannot be empty or null.
+      parameters:
+        - name: X-auth-token
+          in: header
+          description: >-
+            To make use of the API, you require X-auth-token. This is Available
+            in login API Response.
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: userId
+          required: true
+          description: Please append a valid User ID to the Request URL.
+          schema:
+            type: integer
+          example: 1
+      responses:
+        '200':
+          description: OK. User details retrieved successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/profile/profileDetailsResponse200'
+        '401':
+          description: Unauthorized. X-auth-token is either missing or invalid.
+        content:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/profile/Unauthorized401Response'
+  /user/v1/user/setLanguagePreference:
+    patch:
+      summary: Setting preferred language of user
+      tags:
+        - Users APIs
+      description: |
+        This API updates a user's preferred language.
+        - Endpoint: `/user/v1/user/setLanguagePreference`
+        - Mandatory parameters marked as `required` must have valid values.
+        - Parameters cannot be empty or null.
+      parameters:
+        - name: X-auth-token
+          in: header
+          description: >-
+            To make use of the API, you require X-auth-token. This is Available
+            in login API Response.
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/profile/updateRequest'
+      responses:
+        '200':
+          description: Language preferneces updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/profile/updateRequest200Response'
+        '401':
+          description: Unauthorized. X-auth-token is either missing or invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/profile/Unauthorized401Response'
+  /user/v1/user/update:
+    patch:
+      summary: Update User Profile
+      tags:
+        - Users APIs
+      description: |
+        This API updates a user's profile.
+        - Endpoint: `/user/v1/user/update`
+        - Mandatory parameters marked as `required` must have valid values.
+        - Parameters cannot be empty or null.
+      parameters:
+        - name: X-auth-token
+          in: header
+          description: >-
+            To make use of the API, you require X-auth-token. This is Available
+            in login API Response.
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/profile/updateRequest'
+      responses:
+        '200':
+          description: OK. User profile updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/profile/updateRequest200Response'
+        '401':
+          description: Unauthorized. X-auth-token is either missing or invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/profile/Unauthorized401Response'
+  /user/v1/user/share/{userId}:
+    get:
+      summary: Share Mentor Profile
+      tags:
+        - Users APIs
+      description: >
+        This API is associated with sharing a mentor's profile.
+
+        - Endpoint for sharing a mentor's profile:
+        `/user/v1/user/share/{userId}`
+
+        - Mandatory parameters marked as `required` must have valid values.
+
+        - Parameters cannot be empty or null.
+      parameters:
+        - name: X-auth-token
+          in: header
+          description: >-
+            To make use of the API, you require X-auth-token. This is Available
+            in login API Response.
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: userId
+          required: true
+          description: Please append a valid User ID to the Request URL.
+          schema:
+            type: string
+          example: 1
+      responses:
+        '200':
+          description: OK. Mentor profile shared successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/profile/shareMentorProfile200Response'
+        '400':
+          description: Bad Request. Invalid parameters in the request.
+          content:
+            application/json:
+              schema:
+                $ref: >-
+                  #/components/schemas/profile/shareMentorProfileBadRequest400Response
+        '401':
+          description: Unauthorized. X-auth-token is either missing or invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/profile/Unauthorized401Response'
+  /user/v1/cloud-services/file/getSignedUrl?fileName={file_name}:
+    get:
+      summary: Cloud Services - Get Signed URL
+      tags:
+        - Cloud Services APIs
+      description: >
+        This API is associated with cloud services for obtaining a signed URL.
+
+        - Endpoint for cloud services:
+        `/user/v1/cloud-services/file/getSignedUrl`
+
+        - Mandatory parameters marked as `required` must have valid values.
+
+        - Parameters cannot be empty or null.
+      parameters:
+        - name: X-auth-token
+          in: header
+          description: >-
+            To make use of the API, you require X-auth-token. This is Available
+            in login API Response.
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: file_name
+          required: true
+          description: >-
+            Please append a valid file name to the URL, indicating the file to
+            be uploaded.
+          schema:
+            type: string
+          example: image.jpg
+      responses:
+        '200':
+          description: OK. Signed URL obtained successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cloudServices/cloudServicesResponse200'
+  /user/v1/cloud-services/file/getDownloadableUrl?file_path={file_path}:
+    get:
+      summary: Cloud Services - Get Downloadable URL
+      tags:
+        - Cloud Services APIs
+      description: >
+        This API is associated with cloud services for obtaining a downloadable
+        URL.
+
+        - Endpoint for cloud services:
+        `/user/v1/cloud-services/file/getDownloadableUrl`
+
+        - Mandatory parameters marked as `required` must have valid values.
+
+        - Parameters cannot be empty or null.
+      parameters:
+        - name: X-auth-token
+          in: header
+          description: >-
+            To make use of the API, you require X-auth-token. This is Available
+            in login API Response.
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: file_path
+          required: true
+          description: >-
+            Please append a valid file path to the URL, indicating the file to
+            be downloaded.
+          schema:
+            type: string
+          example: users/62832531a05cbd57b273aebb-1654149589875-image.jpg
+      responses:
+        '200':
+          description: OK. Downloadable URL obtained successfully.
+          content:
+            application/json:
+              schema:
+                $ref: >-
+                  #/components/schemas/cloudServices/cloudServicesDownloadResponse200
+  /user/v1/cloud-services/file/getSampleCSV:
+    get:
+      summary: Cloud Services - Get Sample CSV
+      tags:
+        - Cloud Services APIs
+      description: >
+        This API is associated with cloud services for obtaining a sample CSV
+        file for bulk user create.
+
+        - Endpoint for cloud services:
+        `/user/v1/cloud-services/file/getSampleCSV`
+
+        - Mandatory parameters marked as `required` must have valid values.
+
+        - Parameters cannot be empty or null.
+      parameters:
+        - name: X-auth-token
+          in: header
+          description: >-
+            To make use of the API, you require X-auth-token. This is Available
+            in login API Response.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK. Sample CSV obtained successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cloudServices/getSampleCSVResponse200'
+  /user/v1/form/create:
+    post:
+      summary: Create Form
+      tags:
+        - Form APIs
+      description: |
+        This API is associated with creating a form.
+        - Endpoint for creating a form: `/user/v1/form/create`
+        - Mandatory parameters marked as `required` must have valid values.
+        - Parameters cannot be empty or null.
+      parameters:
+        - name: X-auth-token
+          in: header
+          description: >-
+            To make use of the API, you require X-auth-token. This is Available
+            in login API Response.
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/form/createFormRequest'
+      responses:
+        '200':
+          description: OK. Form created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/form/createForm200Response'
+        '400':
+          description: Bad Request. Invalid input data.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/form/createForm400Response'
+  /user/v1/form/update/{formId}:
+    patch:
+      summary: Update Form
+      tags:
+        - Form APIs
+      description: |
+        This API is associated with updating a form.
+        - Endpoint for updating a form: `/user/v1/form/update/{formId}`
+        - Mandatory parameters marked as `required` must have valid values.
+        - Parameters cannot be empty or null.
+      parameters:
+        - name: X-auth-token
+          in: header
+          description: >-
+            To make use of the API, you require X-auth-token. This is Available
+            in login API Response.
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: formId
+          required: true
+          description: Please append a valid form ID to the request URL.
+          schema:
+            type: string
+          example: 1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/form/updateFormRequest'
+      responses:
+        '200':
+          description: OK. Form updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/form/updateForm200Response'
+        '400':
+          description: Bad Request. Invalid input or missing required parameters.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/form/updateForm400Response'
+  /user/v1/form/read/{formId}:
+    post:
+      summary: Get Form Details
+      tags:
+        - Form APIs
+      description: >
+        This API is associated with retrieving form details.
+
+        - Endpoint for retrieving form details: `/user/v1/form/read/{formId}`
+
+        - It is mandatory to provide values for parameters marked with
+        `required`.
+
+        - Mandatory parameters cannot be empty or null.
+      parameters:
+        - name: X-auth-token
+          in: header
+          description: >-
+            To make use of the API, you require X-auth-token. This is Available
+            in login API Response.
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: formId
+          required: true
+          description: Please append a valid form Id to the Request URL.
+          schema:
+            type: integer
+          example: 2
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/form/readFormRequest'
+      responses:
+        '200':
+          description: OK. Form details retrieved successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/form/readForm200Response'
+        '400':
+          description: Bad Request. Invalid or missing parameters.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/form/readForm400Response'
+  /user/v1/admin/create:
+    post:
+      summary: Create Admin User
+      tags:
+        - Admin APIs
+      description: |
+        API associated with creating a new admin user.
+        - Endpoint for creating a system user: `/user/v1/admin/create`
+        - Mandatory parameters marked as `required` must have valid values.
+        - Parameters cannot be empty or null.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/admin/createSystemUserRequest'
+      responses:
+        '201':
+          description: OK. Admin user created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/admin/createSystemUser201Response'
+        '406':
+          description: Bad Request. System User already exists.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/admin/createSystemUser406Response'
+  /user/v1/admin/login:
+    post:
+      summary: Admin Login
+      tags:
+        - Admin APIs
+      description: |
+        This API is associated with the login of the system user.
+        - Endpoint for login system user: `/user/v1/admin/login`
+        - Mandatory parameters marked as `required` must have valid values.
+        - Parameters cannot be empty or null.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/admin/loginSystemUserRequest'
+      responses:
+        '200':
+          description: OK. Successful login.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/admin/loginSystemUser200Response'
+        '400':
+          description: Bad Request. System User doesn't exist.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/admin/loginSystemUser400Response'
+  /user/v1/admin/deleteUser/{id}:
+    delete:
+      summary: Delete User
+      tags:
+        - Admin APIs
+      description: |
+        Delete a user.
+        - Endpoint: `/user/v1/admin/deleteUser`
+        - Mandatory parameters marked as `required` must have valid values.
+        - Parameters cannot be empty or null.
+      parameters:
+        - name: X-auth-token
+          in: header
+          description: >-
+            X-auth-token required for API access. Available in login API
+            Response.
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: id
+          required: true
+          description: >-
+            User ID to be deleted. Please append a valid user ID to the request
+            URL.
+          schema:
+            type: string
+          example: 1
+      responses:
+        '202':
+          description: Accepted. User deletion request received.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/admin/deleteUser202Response'
+        '400':
+          description: Bad Request. User Already Deleted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/admin/deleteUser400Response'
+  /user/admin/addOrgAdmin:
+    post:
+      summary: Add Organization Admin
+      description: |
+        Assigns a user as the Org-Admin.
+        - Endpoint: `/user/v1/admin/addOrgAdmin`
+        - Mandatory parameters marked as `required` must have valid values.
+        - Parameters cannot be empty or null.
+      tags:
+        - Admin APIs
+      parameters:
+        - name: X-auth-token
+          in: header
+          description: >-
+            X-auth-token required for API access. Available in login API
+            Response.
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: integer
+                  example: 12
+                  description: The ID of the user to be assigned as Org-Admin.
+                organization_id:
+                  type: integer
+                  example: 55
+                  description: >-
+                    The ID of the organization to which the user will be
+                    assigned as Org-Admin.
+      responses:
+        '200':
+          description: OK. User assigned as the Org-Admin successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  responseCode:
+                    type: string
+                    example: OK
+                  message:
+                    type: string
+                    example: User Assigned As The Org-Admin Successfully
+                  result:
+                    type: object
+                    properties:
+                      user_id:
+                        type: integer
+                        example: 12
+                      org_id:
+                        type: integer
+                        example: 55
+                      user_roles:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              example: 2
+                            title:
+                              type: string
+                              example: mentor
+                            user_type:
+                              type: integer
+                              example: 1
+                            status:
+                              type: string
+                              example: ACTIVE
+                          example:
+                            - id: 2
+                              title: mentor
+                              user_type: 0
+                              status: ACTIVE
+                            - id: 3
+                              title: org_admin
+                              user_type: 0
+                              status: ACTIVE
+  /user/v1/admin/deactivateOrg/{id}:
+    post:
+      summary: Deactivate Organization
+      tags:
+        - Admin APIs
+      description: |
+        Deactivates an organization.
+        - Endpoint: `/user/v1/admin/deactivateOrg`
+        - Mandatory parameters marked as `required` must have valid values.
+        - Parameters cannot be empty or null.
+      parameters:
+        - name: X-auth-token
+          in: header
+          description: >-
+            X-auth-token required for API access. Available in login API
+            Response.
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: id
+          required: true
+          description: Please append a valid organization ID to the request URL.
+          schema:
+            type: string
+          example: 1
+      responses:
+        '202':
+          description: Accepted. Organization deactivated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/admin/deleteOrg202Response'
+        '400':
+          description: Bad Request. Organization Entity Already Deleted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/admin/deleteUser400Response'
+  /user/v1/admin/deactivateUser:
+    post:
+      summary: Deactivate User
+      tags:
+        - Admin APIs
+      description: |
+        Deactivates one or more users.
+        - Endpoint: `/user/v1/admin/deactivateUser`
+        - Mandatory parameters marked as `required` must have valid values.
+        - Parameters cannot be empty or null.
+      parameters:
+        - name: X-auth-token
+          in: header
+          description: >-
+            X-auth-token required for API access. Available in login API
+            Response.
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: array
+                  items:
+                    type: integer
+                  example:
+                    - 1
+                    - 3
+      responses:
+        '202':
+          description: Accepted. Users deactivated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/admin/deactivateUser202Response'
+        '400':
+          description: Bad Request. User Entity Already Deleted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/admin/deactivateUser400Response'
+  /user/v1/organization/create:
+    post:
+      summary: Create Organization
+      tags:
+        - Organization
+      description: |
+        Creates a new organization.
+        - Endpoint: `/user/v1/organization/create`
+        - Mandatory parameters marked as `required` must have valid values.
+        - Parameters cannot be empty or null.
+      operationId: createOrganization
+      parameters:
+        - name: X-auth-token
+          in: header
+          description: >-
+            X-auth-token required for API access. Available in the login API
+            Response.
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/organization/createOrganizationRequest'
+      responses:
+        '200':
+          description: OK. Organization created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: >-
+                  #/components/schemas/organization/createOrganization200Response
+        '400':
+          description: Bad Request. Organization already exists
+          content:
+            application/json:
+              schema:
+                $ref: >-
+                  #/components/schemas/organization/createOrganization400Response
+  /user/v1/organization/update/{id}:
+    post:
+      summary: Update Organization
+      tags:
+        - Organization
+      description: >
+        This API is associated with updating an organization.
+
+        - Endpoint for updating organization: `/user/v1/organization/update`
+
+        - It is mandatory to provide values for parameters marked with
+        `required`.
+
+        - Mandatory parameters cannot be empty or null.
+      operationId: updateOrganization
+      parameters:
+        - name: X-auth-token
+          in: header
+          description: >-
+            To make use of the API, you require X-auth-token. This is available
+            in the login API response.
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          description: Please append a valid organization ID to the request URL.
+          schema:
+            type: integer
+          example: 1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/organization/createOrganizationRequest'
+      responses:
+        '200':
+          description: OK. Organization updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: >-
+                  #/components/schemas/organization/updateOrganization200Response
+        '400':
+          description: Bad Request. Organization doesn't exist.
+          content:
+            application/json:
+              schema:
+                $ref: >-
+                  #/components/schemas/organization/updateOrganization400Response
+  /user/v1/organization/list:
+    get:
+      summary: List Organization
+      tags:
+        - Organization
+      description: >
+        This API is associated with listing organizations based on specified
+        conditions.
+
+        - Endpoint for listing organizations: `/user/v1/organization/list`
+
+        - Mandatory parameters marked as `required` must have valid values.
+
+        - Parameters cannot be empty or null.
+      parameters:
+        - name: X-auth-token
+          in: header
+          description: >-
+            To make use of the API, you require X-auth-token. This is available
+            in the login API response.
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: page
+          description: Please specify the page number.
+          required: false
+          schema:
+            type: number
+          example: 1
+        - in: query
+          name: limit
+          description: Specify the number of records to limit.
+          required: false
+          schema:
+            type: number
+          example: 2
+        - in: query
+          name: search
+          description: Search for organizations based on name or title.
+          required: false
+          schema:
+            type: string
+          example: john
+      responses:
+        '200':
+          description: OK. Organizations listed successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/organization/organizationList200Response'
+  /user/v1/organization/requestOrgRole:
+    post:
+      summary: Request Org Role
+      description: >
+        This API is associated with requesting a specific role within an
+        organization.
+
+        - Endpoint: `/user/v1/organization/requestOrgRole`
+
+        - Mandatory parameters marked as `required` must have valid values.
+
+        - Parameters cannot be empty or null.
+      tags:
+        - Organization
+      parameters:
+        - name: X-auth-token
+          in: header
+          description: >-
+            User's access token, which already recognizes the user as the
+            organization's mentee.
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Request body containing role information.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                role:
+                  type: integer
+                  example: 2
+                  description: The specific role being requested.
+                form_data:
+                  type: object
+                  description: Additional data related to the organization-specific fields.
+                  properties:
+                    org_specific_fields:
+                      type: string
+                      example: answer
+                      description: Data related to the organization-specific fields.
+      responses:
+        '200':
+          description: Successful request for organization role.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/organization/requestOrgRole200Response'
+  /user/v1/userRole/list:
+    get:
+      summary: Get User Roles
+      tags:
+        - User Roles APIs
+      description: >
+        Retrieve the list of user roles.
+
+
+        - Endpoint: `/user/v1/userRole/list`
+
+        - It is mandatory to provide values for parameters marked as `required`.
+
+        - The X-auth-token obtained from the login API is required in the
+        header.
+      parameters:
+        - name: X-auth-token
+          in: header
+          description: X-auth-token obtained from the login API response.
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: page
+          description: Please add page number
+          schema: &ref_0
+            type: integer
+        - in: query
+          name: limit
+          description: Number of records to limit
+          schema: *ref_0
+        - in: query
+          name: search
+          description: Please search for information such as 'title' names
+          schema: &ref_1
+            type: string
+        - in: query
+          name: user_type
+          description: filtering based on the user_type
+          schema: *ref_0
+        - in: query
+          name: visibility
+          description: filtering based on the visibility
+          schema: *ref_1
+        - in: query
+          name: status
+          description: filtering based on the status
+          schema: *ref_1
+        - in: query
+          name: organization_id
+          description: filtering based on the organization_id
+          schema: *ref_0
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $schema: http://json-schema.org/draft-04/schema#
+                type: object
+                properties:
+                  responseCode:
+                    type: string
+                  message:
+                    type: string
+                  result:
+                    type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: number
+                            title:
+                              type: string
+                            user_type:
+                              type: number
+                            visibility:
+                              type: string
+                            status:
+                              type: string
+                            organization_id:
+                              type: number
+                      count:
+                        type: number
+                  meta:
+                    type: object
+                    properties:
+                      formsVersion:
+                        type: array
+                        items:
+                          type: string
+                      correlation:
+                        type: string
+              examples:
+                example1:
+                  value:
+                    responseCode: OK
+                    message: Roles fetched successfully
+                    result:
+                      data:
+                        - id: 6
+                          title: system_manager
+                          user_type: 1
+                          visibility: PUBLIC
+                          status: ACTIVE
+                          organization_id: 1
+                      count: 1
+                    meta:
+                      formsVersion: []
+                      correlation: b36f45cf-039c-466d-9c50-4649fa4e0856
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/profile/Unauthorized401Response'
+      requestBody:
+        description: ''
+        content: {}
+  /user/v1/entity-type/create:
+    post:
+      summary: Create Entity Type
+      tags:
+        - EntityType APIs
+      description: |
+        Use this API to create a user entity.
+
+        - Endpoint: `/mentoring/v1/entity-type/create`
+        - Provide values for parameters marked as `required`.
+        - The X-auth-token is mandatory and cannot be empty or null.
+      parameters:
+        - name: X-auth-token
+          in: header
+          description: >-
+            Access token of the user who is already a mentee of the
+            organization.
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/entity-type/createEntityTypeRequest'
+      responses:
+        '201':
+          description: OK Entity type created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/entity-type/createEntityType201Response'
+        '400':
+          description: Bad Request. Entity type already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/entity-type/createEntityType400Response'
+  /user/v1/entity-type/update/{id}:
+    post:
+      summary: Update Entity Type
+      tags: []
+      description: |
+        Use this API to update an entity type.
+
+        - Endpoint: `/user/v1/entity-type/update/{id}`
+        - Provide values for parameters marked as `required`.
+        - The X-auth-token is mandatory and cannot be empty or null.
+      parameters: &ref_3
+        - name: X-auth-token
+          in: header
+          description: Access token obtained from the login API response.
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          description: Please append a valid user ID to the request URL.
+          schema:
+            type: integer
+          example: 1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/entity-type/updateEntityTypeRequest'
+      responses:
+        '201':
+          description: OK. Entity Type Updated Successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/entity-type/updateEntityType201Response'
+        '400':
+          description: Bad Request. Entity type already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/entity-type/updateEntityType400Response'
+  /user/v1/entity-type/read:
+    post:
+      summary: Read Entity Type
+      tags:
+        - EntityType APIs
+      description: |
+        Use this API to retrieve a list of entity types.
+
+        - Endpoint: `/user/v1/entity-type/read`
+        - Provide values for parameters marked as `required`.
+        - The X-auth-token is mandatory and cannot be empty or null.
+      parameters:
+        - name: X-auth-token
+          in: header
+          description: >-
+            To make use of the API, you require X-auth-token. This is Available
+            in login API Response.
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $schema: http://json-schema.org/draft-04/schema#
+              type: object
+              properties:
+                value:
+                  type: array
+                  items:
+                    type: string
+                read_user_entity:
+                  type: boolean
+            examples:
+              example1:
+                value:
+                  value:
+                    - ln
+                  read_user_entity: false
+      responses:
+        '201':
+          description: OK Entity Type Fetched Successfully
+          content:
+            application.json:
+              schema:
+                $schema: http://json-schema.org/draft-04/schema#
+                type: object
+                properties:
+                  responseCode:
+                    type: string
+                  message:
+                    type: string
+                  result:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: number
+                        value:
+                          type: string
+                        label:
+                          type: string
+                        status:
+                          type: string
+                        created_by:
+                          type: number
+                        updated_by:
+                          type: number
+                        allow_filtering:
+                          type: boolean
+                        data_type:
+                          type: string
+                        created_at:
+                          type: string
+                        updated_at:
+                          type: string
+                        entities:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: number
+                              entity_type_id:
+                                type: number
+                              value:
+                                type: string
+                              label:
+                                type: string
+                              status:
+                                type: string
+                              type:
+                                type: string
+                              created_by:
+                                type: number
+                              updated_by:
+                                type: number
+                              created_at:
+                                type: string
+                              updated_at:
+                                type: string
+                        has_entities:
+                          type: boolean
+                  meta:
+                    type: object
+                    properties:
+                      correlation:
+                        type: string
+                      meeting_platform:
+                        type: string
+              examples:
+                example1:
+                  value:
+                    responseCode: OK
+                    message: Entity type fetched successfully
+                    result:
+                      - id: 4
+                        value: ln
+                        label: Languages
+                        status: ACTIVE
+                        created_by: 0
+                        updated_by: 0
+                        allow_filtering: true
+                        data_type: STRING
+                        created_at: '2023-09-21T10:16:19.270Z'
+                        updated_at: '2023-09-21T10:16:19.270Z'
+                        has_entities: true
+                        entities:
+                          - id: 13
+                            entity_type_id: 4
+                            value: ml
+                            label: Malayalam
+                            status: ACTIVE
+                            type: SYSTEM
+                            created_by: 1
+                            updated_by: 1
+                            created_at: '2023-09-21T10:16:33.583Z'
+                            updated_at: '2023-09-21T10:16:33.583Z'
+                    meta:
+                      correlation: 64cd08ba-cc87-4172-9633-2146dabe0b78
+                      meeting_platform: BBB
+        '400':
+          description: Bad Request. Entity type already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/userentity/createUserEntity400Response'
+  /user/v1/entity-type/delete/{id}:
+    delete:
+      summary: Delete Entity Type
+      tags:
+        - EntityType APIs
+      description: >
+        This API is associated with deleting an entity type.  - Endpoint for
+        deleting a user entity: `/user/v1/entity-type/delete` - It is mandatory
+        to provide values for parameters marked with `required`. - Mandatory
+        parameters cannot be empty or null.
+      parameters:
+        - name: X-auth-token
+          in: header
+          description: >-
+            To use the API, include X-auth-token. This is available in the login
+            API response.
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: id
+          required: true
+          description: Please append a valid user entity ID to the request URL.
+          schema:
+            type: integer
+          example: 31
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/entity-type/deleteUserEntity202Response'
+        '400':
+          description: Bad Request. Entity Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/entity-type/deleteUserEntity400Response'
+  /user/v1/entity/create:
+    post:
+      summary: Create Entity
+      tags:
+        - Entity APIs
+      description: >
+        This API is associated with entity creation.
+
+        - Endpoint for creating an entity: `/user/v1/entity/create`.
+
+        - It is mandatory to provide values for parameters marked with
+        `required`.
+
+        - Mandatory parameters cannot be empty or null.
+      parameters:
+        - name: X-auth-token
+          in: header
+          description: >-
+            To make use of the API, you require X-auth-token. This is Available
+            in login API Response.
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/userentity/createUserEntityRequest'
+      responses:
+        '201':
+          description: OK. Created
+          content:
+            application.json:
+              schema:
+                $schema: http://json-schema.org/draft-04/schema#
+                type: object
+                properties:
+                  responseCode:
+                    type: string
+                  message:
+                    type: string
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: number
+                      value:
+                        type: string
+                      label:
+                        type: string
+                      status:
+                        type: string
+                      type:
+                        type: string
+                      entity_type_id:
+                        type: number
+                      created_by:
+                        type: number
+                      updated_by:
+                        type: number
+                      updated_at:
+                        type: string
+                      created_at:
+                        type: string
+                      deleted_at:
+                        type: 'null'
+                  meta:
+                    type: object
+                    properties:
+                      formsVersion:
+                        type: array
+                        items:
+                          type: string
+                      correlation:
+                        type: string
+                      meeting_platform:
+                        type: string
+              examples:
+                example1:
+                  value:
+                    responseCode: OK
+                    message: Entity created successfully
+                    result:
+                      id: 1
+                      value: en
+                      label: English
+                      status: ACTIVE
+                      type: string
+                      entity_type_id: 1
+                      created_by: 0
+                      updated_by: 0
+                      updated_at: '2023-07-21T21:46:41.392Z'
+                      created_at: '2023-07-21T21:46:41.392Z'
+                      deleted_at: null
+                    meta:
+                      formsVersion: []
+                      correlation: 6191e4d4-438b-4609-8de6-da3694b506b1
+                      meeting_platform: BBB
+        '400':
+          description: Bad Request. User Entity already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/userentity/createUserEntity400Response'
+  /user/v1/entity/update/{id}:
+    patch:
+      summary: Update Entity
+      tags:
+        - Entity APIs
+      description: >
+        This API is associated with updating an entity.
+
+        - Endpoint for updating an entity: `/user/v1/entity/update`.
+
+        - It is mandatory to provide values for parameters marked with
+        `required`.
+
+        - Mandatory parameters cannot be empty or null.
+      parameters:
+        - name: X-auth-token
+          in: header
+          description: >-
+            To make use of the API, you require X-auth-token. This is Available
+            in login API Response.
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: id
+          required: true
+          description: Please append a valid user entity ID to the request URL.
+          schema:
+            type: integer
+          example: 2
+      requestBody:
+        content:
+          application.json:
+            schema:
+              $schema: http://json-schema.org/draft-04/schema#
+              type: object
+              properties:
+                value:
+                  type: string
+                  description: The value of the entity.
+                label:
+                  type: string
+                  description: The label of the entity.
+                status:
+                  type: string
+                  description: The status of the entity.
+                entity_type_id:
+                  type: number
+                  description: The ID of the entity type.
+            examples:
+              example1:
+                value:
+                  value: en
+                  label: English
+                  status: ACTIVE
+                  entity_type_id: 1
+      responses:
+        '202':
+          description: OK. Accepted
+          content:
+            application.json:
+              schema:
+                $schema: http://json-schema.org/draft-04/schema#
+                type: object
+                properties:
+                  responseCode:
+                    type: string
+                  message:
+                    type: string
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: number
+                      value:
+                        type: string
+                      label:
+                        type: string
+                      status:
+                        type: string
+                      type:
+                        type: string
+                      entity_type_id:
+                        type: number
+                      created_by:
+                        type: number
+                      updated_by:
+                        type: number
+                      updated_at:
+                        type: string
+                      created_at:
+                        type: string
+                      deleted_at:
+                        type: 'null'
+                  meta:
+                    type: object
+                    properties:
+                      formsVersion:
+                        type: array
+                        items:
+                          type: string
+                      correlation:
+                        type: string
+                      meeting_platform:
+                        type: string
+              examples:
+                example1:
+                  value:
+                    responseCode: OK
+                    message: Entity updated successfully
+                    result:
+                      responseCode: OK
+                      message: Entity created successfully
+                      result:
+                        id: 1
+                        value: en
+                        label: English
+                        status: ACTIVE
+                        type: string
+                        entity_type_id: 1
+                        created_by: 0
+                        updated_by: 0
+                        updated_at: '2023-07-21T21:46:41.392Z'
+                        created_at: '2023-07-21T21:46:41.392Z'
+                        deleted_at: null
+                      meta:
+                        formsVersion: []
+                        correlation: 6191e4d4-438b-4609-8de6-da3694b506b1
+                        meeting_platform: BBB
+                    meta:
+                      formsVersion: []
+                      correlation: 4b69c161-1d19-4d4c-963c-057feaa2e82e
+                      meeting_platform: BBB
+        '400':
+          description: Bad Request. User Entity Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/userentity/updateUserEntity400Response'
+  /user/v1/entity/read?id={id}:
+    get:
+      summary: Read User Entity
+      tags:
+        - Entity APIs
+      description: >
+        This API is associated with retrieving a user entity based on ID or
+        value.
+
+        - Endpoint for retrieving a user entity: `/user/v1/entity/read`.
+
+        - It is mandatory to provide values for parameters marked with
+        `required`.
+
+        - Mandatory parameters cannot be empty or null.
+      parameters:
+        - name: X-auth-token
+          in: header
+          description: >-
+            To use the API, include X-auth-token. This is available in the login
+            API response.
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: id
+          required: true
+          description: Please append a valid ID.
+          schema:
+            type: integer
+          example: 1
+      responses:
+        '200':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/userentity/readUserEntity200Response'
+  /user/v1/entity/list:
+    post:
+      summary: Get entity list with pagination and search
+      tags:
+        - Entity APIs
+      description: |-
+        Use this API to get the list of a user entities.   
+         - The API Endpoint for reading the list of the user entities is `/user/v1/entity/list` 
+         - It is mandatory to provide values for parameters which are marked as `required` 
+         - This is a mandatory parameter and cannot be empty or null.
+      parameters:
+        - name: X-auth-token
+          in: header
+          description: >-
+            To use this API, you require an X-auth-token, which is available in
+            the login API Response.
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: page
+          description: Please add page number
+          schema:
+            type: number
+          example: 1
+        - in: path
+          name: limit
+          description: Number of records to limit
+          schema:
+            type: number
+          example: 10
+        - in: path
+          name: search
+          description: search text
+          schema:
+            type: string
+          example: teacher
+        - in: path
+          name: entity_type_id
+          description: entity_type_id
+          required: true
+          schema:
+            type: number
+          example: teacher
+      responses:
+        '200':
+          description: Accepted
+          content:
+            application.json:
+              schema:
+                $schema: http://json-schema.org/draft-04/schema#
+                type: object
+                properties:
+                  responseCode:
+                    type: string
+                  message:
+                    type: string
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: number
+                      entity_type_id:
+                        type: number
+                      value:
+                        type: string
+                      label:
+                        type: string
+                      status:
+                        type: string
+                      type:
+                        type: string
+                      created_by:
+                        type: number
+                      created_at:
+                        type: string
+              examples:
+                example1:
+                  value:
+                    responseCode: OK
+                    message: Entity fetched successfully
+                    result:
+                      data:
+                        - id: 1
+                          entity_type_id: 1
+                          value: english
+                          label: English
+                          status: ACTIVE
+                          type: SYSTEM
+                          created_by: 0
+                          created_at: '2023-07-21T21:46:41.392Z'
+                      count: 1
+
+                    meta:
+                      formsVersion: []
+                      correlation: 0d392602-cb68-4690-8f38-3d3de9f94198
+                      meeting_platform: BBB
+                    parameters: []
+
+  /user/v1/entity/delete/{id}:
+    delete:
+      summary: Delete Entity
+      tags: []
+      description: >
+        This API is associated with deleting an entity.
+
+        - Endpoint for deleting a user entity: `/user/v1/entity/delete`.
+
+        - It is mandatory to provide values for parameters marked with
+        `required`.
+
+        - Mandatory parameters cannot be empty or null.
+      parameters:
+        - &ref_4
+          name: X-auth-token
+          in: header
+          description: >-
+            To use the API, include X-auth-token. This is available in the login
+            API response.
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: id
+          required: true
+          description: Please append a valid user entity ID to the request URL.
+          schema: &ref_5
+            type: integer
+          example: 31
+      responses:
+        '202':
+          description: OK. Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/userentity/deleteUserEntity202Response'
+        '400':
+          description: Bad Request. User Entity Already Deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/userentity/deleteUserEntity400Response'
+  /user/v1/org-admin/getRequests:
+    post:
+      summary: Get Requests
+      description: >
+        Get a list of organization requests based on specified filters
+
+        - Endpoint: `/user/v1/org-admin/getRequests`.
+
+        - It is mandatory to provide values for parameters marked with
+        `required`.
+
+        - Mandatory parameters cannot be empty or null.
+      tags:
+        - Org Admin APIs
+      parameters:
+        - name: X-auth-token
+          in: header
+          description: Access token of the org admin.
+          required: true
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: Page number for pagination.
+          required: true
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          description: Number of items per page.
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                filters:
+                  type: object
+                  properties:
+                    role:
+                      type: array
+                      items:
+                        type: integer
+                        example: 2
+                      description: An array of role IDs.
+                    status:
+                      type: array
+                      items:
+                        type: string
+                        example: APPROVED
+                      description: An array of request statuses.
+                    handled_by:
+                      type: array
+                      items:
+                        type: integer
+                        example: 2
+                      description: An array of user IDs who handled the requests
+        description: |
+          Request body for filtering organization requests.
+          - `role`: An array of role IDs.
+          - `status`: An array of request statuses.
+          - `handled_by`: An array of user IDs who handled the requests.
+      responses:
+        '200':
+          description: OK. Successfully fetched organization requests.
+          content:
+            application/json:
+              example:
+                responseCode: OK
+                message: Organization requests fetched successfully
+                result:
+                  data:
+                    - id: 12
+                      requester_id: 23
+                      role: 2
+                      status: APPROVED
+                      org_id: 43
+                      handled_by: 22
+                      requester:
+                        id: 23
+                        name: Jake
+                        email: jake@gmail.com
+                    - id: 13
+                      requester_id: 22
+                      role: 2
+                      status: APPROVED
+                      org_id: 43
+                      handled_by: 22
+                      requester:
+                        id: 23
+                        name: Jake
+                        email: jake@gmail.com
+                  count: 12
+  /user/v1/org-admin/updateRequestStatus:
+    post:
+      summary: Update Request Status
+      description: >
+        Update the status of an organization request.
+
+        - Endpoint: `/user/v1/org-admin/updateRequestStatus`.
+
+        - It is mandatory to provide values for parameters marked with
+        `required`.
+
+        - Mandatory parameters cannot be empty or null.
+      tags:
+        - Org Admin APIs
+      parameters:
+        - name: X-auth-token
+          in: header
+          description: Access token of the org admin.
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                request_id:
+                  type: integer
+                  example: 12
+                  description: The ID of the organization request to be updated.
+                comments:
+                  type: array
+                  items:
+                    type: string
+                    example: All uploaded documents verified
+                  description: Comments related to the request status update.
+                status:
+                  type: string
+                  enum:
+                    - APPROVED
+                    - REJECTED
+                    - UNDER_REVIEW
+                  example: APPROVED
+                  description: The new status for the organization request.
+      responses:
+        '200':
+          description: OK. Successfully updated organization request status.
+          content:
+            application/json:
+              example:
+                responseCode: OK
+                message: Successfully updated organization request status
+                result:
+                  id: 12
+                  requester_id: 23
+                  status: approved
+                  org_id: 43
+                  handled_by: 22
+                  requester:
+                    id: 23
+                    name: Jake
+  /user/v1/org-admin/getRequestDetails:
+    get:
+      summary: Get Request Details
+      description: >
+        Get details of a specific organization request.
+
+        - Endpoint: `/user/v1/org-admin/getRequestDetails`.
+
+        - It is mandatory to provide values for parameters marked with
+        `required`.
+
+        - Mandatory parameters cannot be empty or null.
+      tags:
+        - Org Admin APIs
+      parameters:
+        - name: X-auth-token
+          in: header
+          description: Access token of the org admin.
+          required: true
+          schema:
+            type: string
+        - name: request_id
+          in: query
+          description: ID of the request to get details for.
+          required: true
+          schema:
+            type: integer
+            example: 12
+      responses:
+        '200':
+          description: OK. Successfully fetched organization request details.
+          content:
+            application/json:
+              example:
+                responseCode: OK
+                message: Organisation request details fetched successfully
+                result:
+                  id: 12
+                  requester_id: 23
+                  role: mentor
+                  status: approved
+                  org_id: 43
+                  handled_by: 22
+                  requester:
+                    id: 23
+                    name: Jake
+                  handler:
+                    id: 24
+                    name: org_admin name
+                  comments:
+                    - Temp 1
+                    - Temp 2
+                  meta: {}
+  /user/v1/org-admin/bulkUserCreate:
+    post:
+      summary: Bulk User Create
+      description: >
+        Create multiple users in bulk using a CSV file.
+
+        - Endpoint: `/user/v1/org-admin/bulkUserCreate`.
+
+        - It is mandatory to provide values for parameters marked with
+        `required`.
+
+        - Mandatory parameters cannot be empty or null.
+      tags: []
+      parameters:
+        - name: X-auth-token
+          in: header
+          description: Access token of the org admin.
+          required: true
+          schema: &ref_2
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                file_path:
+                  type: string
+                  description: The path to the uploaded CSV file containing user data.
+                  example: path/to/uploaded-csv-file
+      responses:
+        '200':
+          description: OK. Successfully uploaded bulk user invites CSV.
+          content:
+            application/json:
+              example:
+                responseCode: OK
+                message: Bulk User Invites CSV Uploaded Successfully
+                result:
+                  id: 20
+                  input_path: <file_path>
+                  status: UPLOADED
+                  created_by: 22
+                  type: text/csv
+                  updated_at: '2023-09-20T12:00:46.533Z'
+                  created_at: '2023-09-20T12:00:46.533Z'
+  /user/v1/org-admin/getBulkInvitesFilesList:
+    get:
+      summary: Get Bulk Invite Files List
+      description: >
+        Get a list of uploaded bulk invite CSV files.
+
+        - Endpoint: `/user/v1/org-admin/getBulkInvitesFilesList`.
+
+        - It is mandatory to provide values for parameters marked with
+        `required`.
+
+        - Mandatory parameters cannot be empty or null.
+      tags: []
+      parameters:
+        - name: X-auth-token
+          in: header
+          description: Access token of the org admin.
+          required: true
+          schema: &ref_9
+            type: string
+        - name: page
+          in: query
+          description: Page number for pagination.
+          required: true
+          schema: &ref_10
+            type: integer
+        - name: limit
+          in: query
+          description: Number of items per page.
+          required: true
+          schema: &ref_11
+            type: integer
+        - name: status
+          in: query
+          description: Status of the bulk invite files (uploaded/processed/failed).
+          required: true
+          schema:
+            type: string
+            enum:
+              - uploaded
+              - processed
+              - failed
+            example: uploaded
+      responses:
+        '200':
+          description: OK. Successfully fetched bulk invite CSV list.
+          content:
+            application/json:
+              example:
+                responseCode: OK
+                message: Bulk Invites CSV List Fetched Successfully
+                result:
+                  data:
+                    - id: 12
+                      name: filename.csv
+                      input_path: <path/to/uploaded-csv>
+                      status: UPLOADED
+                      created_by: 4
+                      type: text/csv
+                      output_path: <path/to/output-csv>
+                    - id: 13
+                      name: filename2.csv
+                      input_path: <path/to/uploaded-csv>
+                      status: UPLOADED
+                      created_by: 4
+                      type: text/csv
+                      output_path: <path/to/output-csv>
+                  count: 2
+  /user/v1/org-admin/deactivateUser/{id}:
+    post:
+      summary: Deactivate User
+      description: >
+        Deactivate a user
+
+        - Endpoint: `/user/v1/org-admin/deactivateUser`.
+
+        - It is mandatory to provide values for parameters marked with
+        `required`.
+
+        - Mandatory parameters cannot be empty or null.
+      tags:
+        - Org Admin APIs
+      parameters:
+        - name: X-auth-token
+          in: header
+          description: Access token of the org admin.
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          description: ID of the user.
+          required: true
+          schema:
+            type: integer
+            example: 12
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/admin/deactivateUser202Response'
+        '400':
+          description: Bad Request. User Entity Already Deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/admin/deactivateUser400Response'
+  /user/v1/org-admin/inheritEntityType:
+    post:
+      summary: Inherit Entity Type
+      description: >
+        Inherit entity type.
+
+        - Endpoint: `/user/v1/org-admin/inheritEntityType`.
+
+        - It is mandatory to provide values for parameters marked with
+        `required`.
+
+        - Mandatory parameters cannot be empty or null.
+      tags:
+        - Org Admin APIs
+      parameters:
+        - name: X-auth-token
+          in: header
+          description: Access token of the org admin.
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/org-admin/inheritEntityTypeRequest'
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/org-admin/inheritEntityType202Response'
+        '400':
+          description: Bad Request. User Entity Already Deleted
+          content:
+            application/json:
+              schema:
+                $ref: >-
+                  #/components/schemas/notification/createNotification400Response
+
+  /user/v1/notification/template:
+    post:
+      summary: Create, Update, and Delete Notification
+      tags:
+        - Notification APIs
+      description: >
+        This API is associated with notification create or update.
+
+        - Endpoint: `/user/v1/notification/template`.
+
+        - It is mandatory to provide values for parameters marked with
+        `required`.
+
+        - Mandatory parameters cannot be empty or null.
+      parameters:
+        - name: X-auth-token
+          in: header
+          description: >-
+            Access token required to use the API. Available in the login API
+            response.
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/notification/createNotificationRequest'
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: >-
+                  #/components/schemas/notification/createNotification200Response
+        '400':
+          description: Bad Request.
+          content:
+            application/json:
+              schema:
+                $ref: >-
+                  #/components/schemas/notification/createNotification400Response
+  /user/v1/userRole/Create:
+    post:
+      summary: Create User Role
+      description: >
+        Create roles for users.
+
+        - Endpoint: `/user/v1/userRole/Create`.
+
+        - It is mandatory to provide values for parameters marked with
+        `required`.
+
+        - Mandatory parameters cannot be empty or null.
+      tags: []
+      parameters:
+        - name: X-auth-token
+          in: header
+          description: Access token of the user
+          required: true
+          schema: *ref_2
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $schema: http://json-schema.org/draft-04/schema#
+              type: object
+              properties:
+                title:
+                  type: string
+                user_type:
+                  type: number
+                status:
+                  type: string
+                visibility:
+                  type: string
+              required:
+                - user_type
+                - status
+                - title
+                - visibility
+            examples:
+              example1:
+                value:
+                  title: system_admin
+                  user_type: 1
+                  status: ACTIVE
+                  visibility: PUBLIC
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $schema: http://json-schema.org/draft-04/schema#
+                type: object
+                properties:
+                  responseCode:
+                    type: string
+                  message:
+                    type: string
+                  result:
+                    type: object
+                    properties:
+                      title:
+                        type: string
+                      user_type:
+                        type: number
+                      status:
+                        type: string
+                      visibility:
+                        type: string
+                      organization_id:
+                        type: number
+                  meta:
+                    type: object
+                    properties:
+                      formsVersion:
+                        type: array
+                        items:
+                          type: string
+                      correlation:
+                        type: string
+              examples:
+                example1:
+                  value:
+                    responseCode: OK
+                    message: Roles added successfully
+                    result:
+                      title: system_admin
+                      user_type: 1
+                      status: ACTIVE
+                      visibility: PUBLIC
+                      organization_id: 1
+                    meta:
+                      formsVersion: []
+                      correlation: 483b441a-c4c2-4c71-9aae-8dcf2d7ee5e8
+  /user/v1/userRole/update/{id}:
+    post:
+      summary: Update User Roles
+      tags:
+        - User Roles APIs
+      description: |
+        Use this API to update an user Role.
+
+        - Endpoint: `/user/v1/userRole/update/{id}`
+        - Provide values for parameters marked as `required`.
+        - The X-auth-token is mandatory and cannot be empty or null.
+      parameters: *ref_3
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $schema: http://json-schema.org/draft-04/schema#
+              type: object
+              properties:
+                title:
+                  type: string
+                user_type:
+                  type: number
+                status:
+                  type: string
+                visibility:
+                  type: string
+              required:
+                - title
+                - user_type
+                - status
+                - visibility
+            examples:
+              example1:
+                value:
+                  title: system_
+                  user_type: 1
+                  status: ACTIVE
+                  visibility: PUBLIC
+      responses:
+        '201':
+          description: OK. Roles updated successfully
+          content:
+            application/json:
+              schema:
+                $schema: http://json-schema.org/draft-04/schema#
+                type: object
+                properties:
+                  responseCode:
+                    type: string
+                  message:
+                    type: string
+                  result:
+                    type: object
+                    properties:
+                      title:
+                        type: string
+                      user_type:
+                        type: number
+                      status:
+                        type: string
+                      visibility:
+                        type: string
+                      organization_id:
+                        type: number
+                  meta:
+                    type: object
+                    properties:
+                      formsVersion:
+                        type: array
+                        items:
+                          type: string
+                      correlation:
+                        type: string
+              examples:
+                example1:
+                  value:
+                    responseCode: OK
+                    message: Roles updated successfully
+                    result:
+                      title: system_
+                      user_type: 1
+                      status: ACTIVE
+                      visibility: PUBLIC
+                      organization_id: 3
+                    meta:
+                      formsVersion: []
+                      correlation: 7672e4b5-2fa7-4022-a18b-cd574898e590
+  /user/v1/userRole/delete/{id}:
+    delete:
+      summary: Delete User Role
+      tags:
+        - User Roles APIs
+      description: >
+        This API is associated with deleting an role.
+
+        - Endpoint for deleting a user role: `/user/v1/userRole/delete/{id}`.
+
+        - It is mandatory to provide values for parameters marked with
+        `required`.
+
+        - Mandatory parameters cannot be empty or null.
+      parameters:
+        - *ref_4
+        - in: path
+          name: id
+          required: true
+          description: Please append a valid user role ID to the request URL.
+          schema: *ref_5
+          example: 31
+      responses:
+        '202':
+          description: OK. Accepted
+          content:
+            application/json:
+              schema:
+                $schema: http://json-schema.org/draft-04/schema#
+                type: object
+                properties:
+                  responseCode:
+                    type: string
+                  message:
+                    type: string
+                  result:
+                    type: object
+                    properties: {}
+                  meta:
+                    type: object
+                    properties:
+                      formsVersion:
+                        type: array
+                        items:
+                          type: string
+                      correlation:
+                        type: string
+              examples:
+                example1:
+                  value:
+                    responseCode: OK
+                    message: Module deleted successfully
+                    result: {}
+                    meta:
+                      formsVersion: []
+                      correlation: 645c901e-a7db-49a3-8d4c-dfc4f0b6dadb
+  /user/v1/permissions/create:
+    post:
+      summary: Create Permissions
+      description: >
+        Create permissions for users.
+
+        - Endpoint: `/user/v1/permissions/create`.
+
+        - It is mandatory to provide values for parameters marked with
+        `required`.
+
+        - Mandatory parameters cannot be empty or null.
+      tags: &ref_6 []
+      parameters: &ref_13
+        - name: X-auth-token
+          in: header
+          description: Access token of the admin.
+          required: true
+          schema: *ref_2
+      requestBody: &ref_7
+        required: true
+        content:
+          application/json:
+            schema:
+              $schema: http://json-schema.org/draft-04/schema#
+              type: object
+              properties:
+                code:
+                  type: string
+                  description: unique permission name
+                module:
+                  type: string
+                  description: module name
+                request_type:
+                  type: array
+                  items:
+                    type: string
+                  description: request types of the api
+                api_path:
+                  type: string
+                  description: permission api path
+                status:
+                  type: string
+                  description: status of the permission
+              required:
+                - code
+                - module
+                - request_type
+                - api_path
+            examples:
+              example1:
+                value:
+                  code: ssss
+                  module: ssss
+                  request_type:
+                    - POST
+                  api_path: /mentoring/v1/sessions/sections/
+                  status: ACTIVE
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema: &ref_8
+                $schema: http://json-schema.org/draft-04/schema#
+                type: object
+                properties:
+                  responseCode:
+                    type: string
+                  message:
+                    type: string
+                  result:
+                    type: object
+                    properties:
+                      Id:
+                        type: number
+                      status:
+                        type: string
+                      module:
+                        type: string
+                      request_type:
+                        type: array
+                        items:
+                          type: string
+                  meta:
+                    type: object
+                    properties:
+                      correlation:
+                        type: string
+                      meetingPlatform:
+                        type: string
+              examples:
+                example1:
+                  value:
+                    responseCode: OK
+                    message: PERMISSION_CREATED_SUCCESSFULLY
+                    result:
+                      Id: 40
+                      status: ACTIVE
+                      module: ssss
+                      request_type:
+                        - POST
+                    meta:
+                      correlation: 7961f058-f152-4dc2-8a3d-081183f06242
+                      meetingPlatform: BBB
+  /user/v1/permissions/update/{id}:
+    post:
+      summary: Update Permissions
+      description: >
+        Create permissions for users.
+
+        - Endpoint: `/user/v1/permissions/update`.
+
+        - It is mandatory to provide values for parameters marked with
+        `required`.
+
+        - Mandatory parameters cannot be empty or null.
+      tags: *ref_6
+      parameters: &ref_12
+        - name: X-auth-token
+          in: header
+          description: Access token of the admin.
+          required: true
+          schema: *ref_2
+      requestBody: *ref_7
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema: *ref_8
+              examples:
+                example1:
+                  value:
+                    responseCode: OK
+                    message: PERMISSION_UPDATED_SUCCESSFULLY
+                    result:
+                      Id: 40
+                      status: ACTIVE
+                      module: ssss
+                      request_type:
+                        - POST
+                    meta:
+                      correlation: 7c47fa4b-605c-49d6-9cb4-baf496de91ac
+                      meetingPlatform: BBB
+  /user/v1/permissions/list?page={page}&limit={limit}&search={search}:
+    get:
+      summary: Permissions List
+      description: >
+        Get a list of permissions.
+
+        - Endpoint: `/user/v1/permissions/list`.
+
+        - It is mandatory to provide values for parameters marked with
+        `required`.
+
+        - Mandatory parameters cannot be empty or null.
+      tags: []
+      parameters: &ref_14
+        - name: X-auth-token
+          in: header
+          description: Access token of the admin.
+          required: true
+          schema: *ref_9
+        - name: page
+          in: query
+          description: Page number for pagination.
+          required: false
+          schema: *ref_10
+        - name: limit
+          in: query
+          description: Number of items per page.
+          required: false
+          schema: *ref_11
+        - in: query
+          name: search
+          description: search on code
+          schema:
+            type: string
+          required: false
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $schema: http://json-schema.org/draft-04/schema#
+                type: object
+                properties:
+                  responseCode:
+                    type: string
+                  message:
+                    type: string
+                  result:
+                    type: object
+                    properties:
+                      results:
+                        type: object
+                        properties:
+                          data:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                id:
+                                  type: number
+                                code:
+                                  type: string
+                                module:
+                                  type: string
+                                request_type:
+                                  type: array
+                                  items:
+                                    type: string
+                                api_path:
+                                  type: string
+                                status:
+                                  type: string
+                          count:
+                            type: number
+                  meta:
+                    type: object
+                    properties:
+                      correlation:
+                        type: string
+                      meetingPlatform:
+                        type: string
+              examples:
+                example1:
+                  value:
+                    responseCode: OK
+                    message: Permissions fetched successfully
+                    result:
+                      results:
+                        data:
+                          - id: 3
+                            code: read_modules_list
+                            module: modules
+                            request_type:
+                              - GET
+                            api_path: /mentoring/v1/modules/list
+                            status: ACTIVE
+                        count: 1
+                    meta:
+                      correlation: 0e36b1d1-adcf-4c5e-812a-1ad1d00a9163
+                      meetingPlatform: BBB
+  /user/v1/permissions/delete/{id}:
+    delete:
+      summary: Delete Permissions
+      description: >
+        Create permissions for users.
+
+        - Endpoint: `/user/v1/permissions/delete`.
+
+        - It is mandatory to provide values for parameters marked with
+        `required`.
+
+        - Mandatory parameters cannot be empty or null.
+      tags: *ref_6
+      parameters: *ref_12
+      requestBody: &ref_15
+        required: true
+      responses:
+        '202':
+          description: OK
+          content:
+            application/json:
+              schema: &ref_16
+                $schema: http://json-schema.org/draft-04/schema#
+                type: object
+                properties:
+                  responseCode:
+                    type: string
+                  message:
+                    type: string
+                  result:
+                    type: object
+                    properties: {}
+                  meta:
+                    type: object
+                    properties:
+                      correlation:
+                        type: string
+                      meetingPlatform:
+                        type: string
+              examples:
+                example1:
+                  value:
+                    responseCode: OK
+                    message: Permission deleted successfully
+                    result: {}
+                    meta:
+                      correlation: a3f7cde4-83f2-4143-a5c4-7e3291085cb4
+                      meetingPlatform: BBB
+  /user/v1/modules/create:
+    post:
+      summary: Create Modules
+      description: >
+        Create modules for users.
+
+        - Endpoint: `/user/v1/modules/create`.
+
+        - It is mandatory to provide values for parameters marked with
+        `required`.
+
+        - Mandatory parameters cannot be empty or null.
+      tags: []
+      parameters: *ref_13
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $schema: http://json-schema.org/draft-04/schema#
+              type: object
+              properties:
+                code:
+                  type: string
+              required:
+                - code
+            examples:
+              example1:
+                value:
+                  code: systemadmin
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $schema: http://json-schema.org/draft-04/schema#
+                type: object
+                properties:
+                  responseCode:
+                    type: string
+                  message:
+                    type: string
+                  result:
+                    type: object
+                    properties:
+                      Id:
+                        type: number
+                      code:
+                        type: string
+                      status:
+                        type: string
+                  meta:
+                    type: object
+                    properties:
+                      correlation:
+                        type: string
+                      meetingPlatform:
+                        type: string
+              examples:
+                example1:
+                  value:
+                    responseCode: OK
+                    message: MODULES_CREATED_SUCCESSFULLY
+                    result:
+                      Id: 6
+                      code: systemadmin
+                      status: ACTIVE
+                    meta:
+                      correlation: 39c77b7e-5fd8-4806-8602-20604fdb7f42
+                      meetingPlatform: BBB
+  /user/v1/modules/update/{id}:
+    post:
+      summary: Update Modules
+      description: >
+        Create modules for users.
+
+        - Endpoint: `/user/v1/modules/update`.
+
+        - It is mandatory to provide values for parameters marked with
+        `required`.
+
+        - Mandatory parameters cannot be empty or null.
+      tags:
+        - Modules
+      parameters: *ref_12
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $schema: http://json-schema.org/draft-04/schema#
+              type: object
+              properties:
+                code:
+                  type: string
+              required:
+                - code
+            examples:
+              example1:
+                value:
+                  code: allsessionss
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $schema: http://json-schema.org/draft-04/schema#
+                type: object
+                properties:
+                  responseCode:
+                    type: string
+                  message:
+                    type: string
+                  result:
+                    type: object
+                    properties:
+                      id:
+                        type: number
+                      status:
+                        type: string
+                      code:
+                        type: string
+                  meta:
+                    type: object
+                    properties:
+                      correlation:
+                        type: string
+                      meetingPlatform:
+                        type: string
+              examples:
+                example1:
+                  value:
+                    responseCode: OK
+                    message: MODULES_UPDATED_SUCCESSFULLY
+                    result:
+                      id: 6
+                      status: ACTIVE
+                      code: allsessionss
+                    meta:
+                      correlation: 17c9e91d-5b08-4db0-9ed6-627a803c804b
+                      meetingPlatform: BBB
+  /user/v1/modules/list?page={page}&limit={limit}&search={search}:
+    get:
+      summary: Modules List
+      description: >
+        Get a list of modules.
+
+        - Endpoint: `/user/v1/modules/list`.
+
+        - It is mandatory to provide values for parameters marked with
+        `required`.
+
+        - Mandatory parameters cannot be empty or null.
+      tags:
+        - Modules
+      parameters: *ref_14
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $schema: http://json-schema.org/draft-04/schema#
+                type: object
+                properties:
+                  responseCode:
+                    type: string
+                  message:
+                    type: string
+                  result:
+                    type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: number
+                            code:
+                              type: string
+                            status:
+                              type: string
+                          required:
+                            - id
+                            - code
+                            - status
+                      count:
+                        type: number
+                  meta:
+                    type: object
+                    properties:
+                      correlation:
+                        type: string
+                      meetingPlatform:
+                        type: string
+              examples:
+                example1:
+                  value:
+                    responseCode: OK
+                    message: Module fetched successfully
+                    result:
+                      data:
+                        - id: 6
+                          code: adminsystem
+                          status: ACTIVE
+                        - id: 2
+                          code: manage_session
+                          status: ACTIVE
+                        - id: 4
+                          code: modules
+                          status: ACTIVE
+                        - id: 5
+                          code: system
+                          status: ACTIVE
+                      count: 4
+                    meta:
+                      correlation: 4cbb42f7-ed92-41a1-b93d-d689121cda08
+                      meetingPlatform: BBB
+  /user/v1/modules/delete/{id}:
+    delete:
+      summary: Delete Modules
+      description: >
+        Create modules for users.
+
+        - Endpoint: `/user/v1/modules/delete`.
+
+        - It is mandatory to provide values for parameters marked with
+        `required`.
+
+        - Mandatory parameters cannot be empty or null.
+      tags: []
+      parameters: *ref_12
+      requestBody: *ref_15
+      responses:
+        '202':
+          description: OK
+          content:
+            application/json:
+              schema: *ref_16
+              examples:
+                example1:
+                  value:
+                    responseCode: OK
+                    message: Module deleted successfully
+                    result: {}
+                    meta:
+                      correlation: 471d834a-4954-4564-ae91-6a1f24bec1e5
+                      meetingPlatform: BBB
+  /user/v1/rolePermissionMapping/create/{role_id}:
+    post:
+      summary: Create Role Permissions Mapping
+      description: >
+        Create rolePermissionMapping for users.
+
+        - Endpoint: `/user/v1/rolePermissionMapping/create`.
+
+        - It is mandatory to provide values for parameters marked with
+        `required`.
+
+        - Mandatory parameters cannot be empty or null.
+      tags:
+        - RolePermissionMapping
+      parameters: *ref_13
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $schema: http://json-schema.org/draft-04/schema#
+              type: object
+              properties:
+                permission_id:
+                  type: number
+            examples:
+              example1:
+                value:
+                  permission_id: 1
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $schema: http://json-schema.org/draft-04/schema#
+                type: object
+                properties:
+                  responseCode:
+                    type: string
+                  message:
+                    type: string
+                  result:
+                    type: object
+                    properties:
+                      roleId:
+                        type: number
+                      permissionId:
+                        type: number
+                      module:
+                        type: string
+                      request_type:
+                        type: array
+                        items:
+                          type: string
+                  meta:
+                    type: object
+                    properties:
+                      correlation:
+                        type: string
+                      meetingPlatform:
+                        type: string
+              examples:
+                example1:
+                  value:
+                    responseCode: OK
+                    message: Permission added to the role
+                    result:
+                      roleId: 2
+                      permissionId: 1
+                      module: mentees
+                      request_type:
+                        - GET
+                    meta:
+                      correlation: ad793d7f-3bb1-4bbd-9d59-bdf79dff5f86
+                      meetingPlatform: BBB
+  /user/v1/rolePermissionMapping/delete/{role_id}:
+    post:
+      summary: Delete rolePermissionMapping
+      description: >
+        Create rolePermissionMapping for users.
+
+        - Endpoint: `/user/v1/rolePermissionMapping/delete`.
+
+        - It is mandatory to provide values for parameters marked with
+        `required`.
+
+        - Mandatory parameters cannot be empty or null.
+      tags:
+        - RolePermissionMapping
+      parameters: *ref_12
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $schema: http://json-schema.org/draft-04/schema#
+              type: object
+              properties:
+                permission_id:
+                  type: number
+              required:
+                - permission_id
+            examples:
+              example1:
+                value:
+                  permission_id: 1
+      responses:
+        '202':
+          description: OK
+          content:
+            application/json:
+              schema: *ref_16
+              examples:
+                example1:
+                  value:
+                    responseCode: OK
+                    message: ROLE_PERMISSION_MAPPING_DELETED_SUCCESSFULLY
+                    result: {}
+                    meta:
+                      correlation: 4373a59a-ca10-4932-b7ce-8675009ef388
+                      meetingPlatform: BBB
+components:
+  schemas:
+    user:
+      registrationOtp400Response:
+        description: Email field is required
+        type: object
+        properties:
+          responseCode:
+            type: string
+            example: CLIENT_ERROR
+          message:
+            type: string
+            example: Validation failed, Entered data is incorrect!
+          error:
+            type: array
+            items:
+              type: object
+              properties:
+                location:
+                  type: string
+                  example: body
+                param:
+                  type: string
+                  example: email
+                msg:
+                  type: string
+                  example: email field is empty
+      registrationOtpResponse200:
+        description: Registration OTP response
+        type: object
+        properties:
+          responseCode:
+            type: string
+            example: OK
+          message:
+            type: string
+            example: >-
+              OTP has been sent to your registered email ID. Please enter the
+              otp to complete the registration process.
+          result:
+            type: array
+            items:
+              type: string
+            example: []
+      registrationOtpRequest:
+        type: object
+        description: Request body for registration OTP
+        properties:
+          name:
+            type: string
+            example: Anu
+          email:
+            type: string
+            example: anu@gmail.com
+          password:
+            type: string
+            example: password
+      userCreateUserRequest:
+        description: User program and solution request
+        type: object
+        required:
+          - name
+          - email
+          - password
+          - role
+        properties:
+          name:
+            type: string
+            description: Name of the user
+            example: John Deo
+            required: true
+          email:
+            type: string
+            description: Email Id of user
+            example: example@mail.com
+            required: true
+          password:
+            type: string
+            description: Password of user
+            format: password
+            example: Password
+            required: true
+          otp:
+            type: string
+            description: Email OTP for verification
+            example: 6845975
+            required: true
+          has_accepted_terms_and_conditions:
+            type: boolean
+            description: Flag specifiying if user has accepted the terms & conditions
+            example: true
+            required: true
+      userCreateUserResponse:
+        description: User creation response
+        type: object
+        properties:
+          responseCode:
+            type: string
+            example: OK
+          message:
+            type: string
+            example: Sign-up successful Please wait while logging in.
+          result:
+            type: object
+            properties:
+              access_token:
+                type: string
+                example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+              refresh_token:
+                type: string
+                example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+              user:
+                type: object
+                properties:
+                  id:
+                    type: number
+                    example: 8
+                  email:
+                    type: string
+                    example: example@mail.com
+                  email_verified:
+                    type: string
+                    example: 'true'
+                  name:
+                    type: string
+                    example: John Deo
+                  status:
+                    type: string
+                    example: ACTIVE
+                  has_accepted_terms_and_conditions:
+                    type: boolean
+                    example: true
+                  preferred_language:
+                    type: string
+                    example: en
+                  organization_id:
+                    type: number
+                    example: 1
+                  roles:
+                    type: array
+                    items:
+                      type: number
+                    example:
+                      - 3
+                  created_at:
+                    type: string
+                    example: '2023-09-20T11:59:37.871Z'
+                  updated_at:
+                    type: string
+                    example: '2023-09-20T11:59:37.871Z'
+                  user_roles:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: number
+                          example: 3
+                        title:
+                          type: string
+                          example: mentee
+                        user_type:
+                          type: number
+                          example: 0
+                        status:
+                          type: string
+                          example: ACTIVE
+      userCreateUser406Exist:
+        description: User solutions response
+        type: object
+        properties:
+          responseCode:
+            type: string
+            example: CLIENT_ERROR
+          message:
+            type: string
+            example: User already exists.
+          error:
+            type: array
+            items:
+              type: string
+            example: []
+      userCreateUser400Response:
+        description: Reffral Code is Invalid
+        type: object
+        properties:
+          responseCode:
+            type: string
+            example: CLIENT_ERROR
+          message:
+            type: string
+            example: The OTP you entered is wrong.
+          error:
+            type: array
+            items:
+              type: string
+            example: []
+      userLoginRequest:
+        type: object
+        description: Request body for user login
+        required:
+          - email
+          - password
+        properties:
+          email:
+            type: string
+            description: Email address of the user
+            example: example@mail.com
+          password:
+            type: string
+            description: User password
+            example: Password
+      userLoginResponse:
+        type: object
+        description: User login response
+        properties:
+          responseCode:
+            type: string
+            example: OK
+          message:
+            type: string
+            example: User logged in successfully.
+          result:
+            type: object
+            properties:
+              access_token:
+                type: string
+                example: >-
+                  eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7ImlkIjo3LCJlbWFpbCI6ImhpbGJlcnQyOUB5YWhvby5jb20iLCJuYW1lIjoiQWRlbGlhIiwicm9sZXMiOlt7ImlkIjoyLCJ0aXRsZSI6Im1lbnRvciIsInVzZXJfdHlwZSI6MCwic3RhdHVzIjoiYWN0aXZlIn1dfSwiaWF0IjoxNjkwMjg2Nzg2LCJleHAiOjE2OTAzNzMxODZ9.0_Yi8yEu_G04VNJvVvafWMvO-Eb9TVsoCnp_pfrFVi8
+              refresh_token:
+                type: string
+                example: >-
+                  eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7ImlkIjo3LCJlbWFpbCI6ImhpbGJlcnQyOUB5YWhvby5jb20iLCJuYW1lIjoiQWRlbGlhIiwicm9sZXMiOlt7ImlkIjoyLCJ0aXRsZSI6Im1lbnRvciIsInVzZXJfdHlwZSI6MCwic3RhdHVzIjoiYWN0aXZlIn1dfSwiaWF0IjoxNjkwMjg2Nzg2LCJleHAiOjE3MDYwOTc5ODZ9.quHyyjz4DEc7rvKpxwzaiRyRKFkqrbTb8tNB5zX0eF0
+              user:
+                type: object
+                properties:
+                  id:
+                    type: number
+                    example: 7
+                  email:
+                    type: string
+                    example: hilbert29@yahoo.com
+                  email_verified:
+                    type: string
+                    example: true
+                  name:
+                    type: string
+                    example: Adelia
+                  gender:
+                    type: object
+                    properties:
+                      value:
+                        type: string
+                        example: male
+                      label:
+                        type: string
+                        example: Male
+                  languages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        value:
+                          type: string
+                          example: en_in
+                        label:
+                          type: string
+                          example: English
+                  about:
+                    type: string
+                    example: null
+                  share_link:
+                    type: string
+                    example: null
+                  status:
+                    type: string
+                    example: ACTIVE
+                  last_logged_in_at:
+                    type: string
+                    format: date-time
+                    example: '2023-07-25T11:50:35.044Z'
+                  has_accepted_terms_and_conditions:
+                    type: boolean
+                    example: true
+                  location:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        value:
+                          type: string
+                          example: ap
+                        label:
+                          type: string
+                          example: Andhra Pradesh
+                  preferred_language:
+                    type: object
+                    properties:
+                      value:
+                        type: string
+                        example: english
+                      label:
+                        type: string
+                        example: English
+                  organization:
+                    type: object
+                    properties:
+                      id:
+                        type: number
+                        example: 2
+                      name:
+                        type: string
+                        example: Tunerlabs
+                      code:
+                        type: string
+                        example: tl
+                  organization_id:
+                    type: number
+                    example: 2
+                  roles:
+                    type: array
+                    items:
+                      type: number
+                    example:
+                      - 2
+                  image:
+                    type: string
+                    example: https://cloudstorage.com/container/abc.png
+                  deleted_at:
+                    type: string
+                    example: null
+                  created_at:
+                    type: string
+                    example: '2023-07-24T14:37:56.393Z'
+                  updated_at:
+                    type: string
+                    example: '2023-07-25T11:50:35.044Z'
+                  user_roles:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: number
+                          example: 1
+                        title:
+                          type: string
+                          example: mentee
+                        user_type:
+                          type: integer
+                          example: 0
+                        status:
+                          type: string
+                          example: ACTIVE
+      userLoginResponse400:
+        description: Username or password is invalid.
+        type: object
+        properties:
+          responseCode:
+            type: string
+            example: CLIENT_ERROR
+          message:
+            type: string
+            example: Please enter the correct login ID and Password.
+          error:
+            type: array
+            items:
+              type: string
+            example: []
+      acceptTermsAndConditionResponse:
+        description: OK, User Accepted Terms.
+        type: object
+        properties:
+          responseCode:
+            type: string
+            example: OK
+          message:
+            type: string
+            example: User successfully updated.
+          result:
+            type: array
+            items:
+              type: string
+            example: []
+      acceptTermsAndConditionResponse400:
+        description: OK, User Does not exist
+        type: object
+        properties:
+          responseCode:
+            type: string
+            example: CLIENT_ERROR
+          message:
+            type: string
+            example: User doesn't exist.
+          error:
+            type: array
+            items:
+              type: string
+            example: []
+      generateTokenRequest:
+        type: object
+        description: Request body for generating access token
+        required:
+          - refresh_token
+        properties:
+          refresh_token:
+            type: string
+            description: Refresh token.
+            example: >-
+              eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7Il9pZCI6IjYyODMyNTMxYTA1Y2JkNTdiMjczYWViYiIsImVtYWlsIjoiYW5raXQuc0BwYWNld2lzZG9tLmNvbSIsIm5hbWUiOiJBbmtpdCIsImlzQU1lbnRvciI6dHJ1ZX0sImlhdCI6MTY1MzAxMDYxNCwiZXhwIjoxNjY4ODIxODE0fQ.hrIiKz3envHDPauVXSmA_BO_KKzWJAePsP3xD8l851s
+      generateTokenResponse200:
+        description: OK. Access token has been generated successfully.
+        type: object
+        properties:
+          responseCode:
+            type: string
+            example: OK
+          message:
+            type: string
+            example: Access token generated successfully
+          result:
+            type: object
+            properties:
+              access_token:
+                type: string
+                example: >-
+                  eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7Il9pZCI6IjYyODMyNTMxYTA1Y2JkNTdiMjczYWViYiIsImVtYWlsIjoiYW5raXQuc0BwYWNld2lzZG9tLmNvbSIsIm5hbWUiOiJBbmtpdCIsImlzQU1lbnRvciI6dHJ1ZX0sImlhdCI6MTY1MzAxMDk4NCwiZXhwIjoxNjUzMDk3Mzg0fQ.BOZ_d6xNxuAJZ1ubdj94mCeO4jwXsC7t9JT4KXECVN
+      generateTokenResponse400:
+        description: Bad Request
+        type: object
+        properties:
+          responseCode:
+            type: string
+            example: CLIENT_ERROR
+          message:
+            type: string
+            example: User doesn't exist.
+          error:
+            type: array
+            items:
+              type: string
+            example: []
+      generateTokenResponse401:
+        description: Unauthorized
+        type: object
+        properties:
+          responseCode:
+            type: string
+            example: SERVER_ERROR
+          message:
+            type: string
+            example: Refresh token expired
+          error:
+            type: array
+            items:
+              type: string
+            example: []
+      generateTokenResponse500:
+        description: Internal Server Error
+        type: object
+        properties:
+          responseCode:
+            type: string
+            example: CLIENT_ERROR
+          message:
+            type: string
+            example: Refresh token not found
+          error:
+            type: array
+            items:
+              type: string
+            example: []
+      genrateOtpRequest:
+        type: object
+        description: Request body for generating OTP
+        required:
+          - email
+          - password
+        properties:
+          email:
+            type: string
+            description: Email address of the user
+            example: example@mail.com
+          password:
+            type: string
+            description: User password
+            example: Password
+      generateOtpResponse200:
+        description: OK, otp genrated successfully
+        type: object
+        properties:
+          responseCode:
+            type: string
+            example: OK
+          message:
+            type: string
+            example: >-
+              OTP has been sent to your registered email ID. Please enter the
+              number to update your password.
+          result:
+            type: array
+            items:
+              type: string
+            example: []
+      generateOtpResponse400:
+        description: Internal Server Error
+        type: object
+        properties:
+          responseCode:
+            type: string
+            example: SERVER_ERROR
+          message:
+            type: string
+            example: Unable to send otp, may be redis server is down.
+          error:
+            type: array
+            items:
+              type: string
+            example: []
+      generateOtpResponse500:
+        description: OTP Response
+        type: object
+        properties:
+          responseCode:
+            type: string
+            example: CLIENT_ERROR
+          message:
+            type: string
+            example: User doesn't exist.
+          error:
+            type: array
+            items:
+              type: string
+            example: []
+      resetPasswordRequest:
+        type: object
+        description: Request body for resetting the user password
+        required:
+          - email
+          - password
+          - otp
+        properties:
+          email:
+            type: string
+            description: Email address of the user
+            example: example@mail.com
+          password:
+            type: string
+            description: New password of the user
+            example: New password
+          otp:
+            type: number
+            description: OTP sent to the user's email
+            example: 123456
+      resetPasswordResponse200:
+        type: object
+        description: Reset Password response
+        properties:
+          responseCode:
+            type: string
+            example: OK
+          message:
+            type: string
+            example: Password reset successfully.
+          result:
+            type: object
+            properties:
+              access_token:
+                type: string
+                example: >-
+                  eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7ImlkIjo5LCJlbWFpbCI6ImJyYW5keW4udGVycnlAeWFob28uY29tIiwibmFtZSI6IkFzaGx5Iiwicm9sZXMiOlt7ImlkIjoyLCJ0aXRsZSI6Im1lbnRvciIsInVzZXJfdHlwZSI6MCwic3RhdHVzIjoiYWN0aXZlIn1dfSwiaWF0IjoxNjkwMjg1NzE4LCJleHAiOjE2OTAzNzIxMTh9.WmhUXIocykrBVti7vtznx_BMAaBtuqYUks4sc1J94Do
+              refresh_token:
+                type: string
+                example: >-
+                  eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7ImlkIjo5LCJlbWFpbCI6ImJyYW5keW4udGVycnlAeWFob28uY29tIiwibmFtZSI6IkFzaGx5Iiwicm9sZXMiOlt7ImlkIjoyLCJ0aXRsZSI6Im1lbnRvciIsInVzZXJfdHlwZSI6MCwic3RhdHVzIjoiYWN0aXZlIn1dfSwiaWF0IjoxNjkwMjg1NzE4LCJleHAiOjE3MDYwOTY5MTh9.eqJ-KD0YA-Cdpz3XHWKgmi66uU6o229K9pyp6BwAAzI
+              user:
+                type: object
+                properties:
+                  id:
+                    type: number
+                    example: 9
+                  email:
+                    type: string
+                    example: brandyn.terry@yahoo.com
+                  email_verified:
+                    type: string
+                    example: true
+                  name:
+                    type: string
+                    example: Ashly
+                  gender:
+                    type: object
+                    properties:
+                      value:
+                        type: string
+                        example: male
+                      label:
+                        type: string
+                        example: Male
+                  about:
+                    type: string
+                    example: null
+                  share_link:
+                    type: string
+                    example: null
+                  status:
+                    type: string
+                    example: ACTIVE
+                  image:
+                    type: string
+                    example: null
+                  last_logged_in_at:
+                    type: string
+                    format: nullable
+                  has_accepted_terms_and_conditions:
+                    type: boolean
+                    example: true
+                  languages:
+                    type: array
+                    items:
+                      type: string
+                    example: []
+                  preferred_language:
+                    type: string
+                    example: en
+                  organization_id:
+                    type: number
+                    example: 1
+                  roles:
+                    type: array
+                    items:
+                      type: number
+                      example: 2
+                  deleted_at:
+                    type: string
+                    example: null
+                  created_at:
+                    type: string
+                    example: '2023-07-25T11:48:38.270Z'
+                  updated_at:
+                    type: string
+                    example: '2023-07-25T11:48:38.270Z'
+                  user_roles:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: number
+                          example: 2
+                        title:
+                          type: string
+                          example: mentor
+                        user_type:
+                          type: number
+                          example: 0
+                        status:
+                          type: string
+                          example: ACTIVE
+      resetPasswordResponse400:
+        description: Bad Request
+        type: object
+        properties:
+          responseCode:
+            type: string
+            example: CLIENT_ERROR
+          message:
+            type: string
+            example: Please enter a new password, that has not been used before
+          error:
+            type: array
+            items:
+              type: string
+            example: []
+      resetPasswordResponse401:
+        description: UnAuthorized
+        type: object
+        properties:
+          responseCode:
+            type: string
+            example: CLIENT_ERROR
+          message:
+            type: string
+            example: Please enter the correct OTP.
+          error:
+            type: array
+            items:
+              type: string
+            example: []
+      logoutRequest:
+        type: object
+        description: Request body for user logout
+        required:
+          - refreshToken
+        properties:
+          refresh_token:
+            type: string
+            description: Refresh token.
+            example: >-
+              eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7Il9pZCI6IjYyODMyNTMxYTA1Y2JkNTdiMjczYWViYiIsImVtYWlsIjoiYW5raXQuc0BwYWNld2lzZG9tLmNvbSIsIm5hbWUiOiJBbmtpdCIsImlzQU1lbnRvciI6dHJ1ZX0sImlhdCI6MTY1MzAxMDYxNCwiZXhwIjoxNjY4ODIxODE0fQ.hrIiKz3envHDPauVXSmA_BO_KKzWJAePsP3xD8l851s
+      logoutResponse200:
+        description: OK, User logout successfully
+        type: object
+        properties:
+          responseCode:
+            type: string
+            example: OK
+          message:
+            type: string
+            example: User logged out successfully.
+          result:
+            type: array
+            items:
+              type: string
+            example: []
+      logoutResponse400:
+        description: Bad Request
+        type: object
+        properties:
+          responseCode:
+            type: string
+            example: CLIENT_ERROR
+          message:
+            type: string
+            example: User doesn't exist.
+          error:
+            type: array
+            items:
+              type: string
+            example: []
+      logoutResponse401:
+        description: Unauthorized
+        type: object
+        properties:
+          responseCode:
+            type: string
+            example: UNAUTHORIZED
+          message:
+            type: string
+            example: Invalid refresh token
+          error:
+            type: array
+            items:
+              type: string
+            example: []
+      userList200Response:
+        description: User list
+        type: object
+        properties:
+          responseCode:
+            type: string
+            example: OK
+          message:
+            type: string
+            example: Mentor list fetched successfully.
+          result:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    key:
+                      type: string
+                      example: A
+                    values:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          _id:
+                            type: string
+                            example: 1
+                          name:
+                            type: string
+                            example: jhon
+                          image:
+                            type: string
+                            example: >-
+                              https://aws-bucket-storage-name.s3.ap-south-1.amazonaws.com/https://cloudstorage.com/container/abc.png
+              count:
+                type: number
+                example: 1
+    profile:
+      profileDetailsResponse200:
+        type: object
+        description: User solutions response
+        properties:
+          responseCode:
+            type: string
+            example: OK
+          message:
+            type: string
+            example: Profile fetched successfully.
+          result:
+            type: object
+            properties:
+              email:
+                type: string
+                example: example@mail.com
+              role:
+                type: string
+                example: mentee
+              email_verified:
+                type: boolean
+                example: true
+              has_accepted_terms_and_conditions:
+                type: boolean
+                example: false
+              id:
+                type: string
+                example: 1
+              name:
+                type: string
+                example: Ankit
+              location:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    value:
+                      type: string
+                      example: kl
+                    label:
+                      type: string
+                      example: Kerala
+              languages:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    value:
+                      type: string
+                      example: english
+                    label:
+                      type: string
+                      example: English
+              organization_id:
+                type: number
+                example: 2
+              preferred_language:
+                type: object
+                properties:
+                  value:
+                    type: string
+                    example: english
+                  label:
+                    type: string
+                    example: English
+              status:
+                type: string
+                example: ACTIVE
+              share_link:
+                type: string
+                example: null
+              updated_at:
+                type: string
+                example: '2022-05-18T05:24:52.431Z'
+              created_at:
+                type: string
+                example: '2022-05-18T05:24:52.431Z'
+              last_logged_in_at:
+                type: string
+                example: '2022-05-18T05:24:52.431Z'
+              about:
+                type: string
+                example: This is test about of mentee
+              gender:
+                type: object
+                properties:
+                  value:
+                    type: string
+                    example: male
+                  label:
+                    type: string
+                    example: Male
+              image:
+                type: string
+                example: https://cloudstorage.com/container/abc.png
+      Unauthorized401Response:
+        description: UNAUTHORIZED
+        type: object
+        properties:
+          responseCode:
+            type: string
+            example: UNAUTHORIZED
+          message:
+            type: string
+            example: Access token expired
+          error:
+            type: array
+            items:
+              type: string
+            example: []
+      updateRequest:
+        type: object
+        description: User profile update request
+        properties:
+          name:
+            type: string
+            description: The user's name.
+            example: John
+          location:
+            type: array
+            items:
+              type: string
+              description: The user's location(s).
+            example:
+              - ap
+          about:
+            type: string
+            description: A brief description about the user.
+            example: Experienced Teacher
+          has_accepted_terms_and_conditions:
+            type: boolean
+            description: Indicates whether the user has accepted terms and conditions.
+            example: true
+          gender:
+            type: string
+            description: The user's gender.
+            example: male
+          image:
+            type: string
+            description: URL of the user's profile image.
+            example: https://cloudstorage.com/container/abc.png
+      updateRequest200Response:
+        description: Accepted
+        type: object
+        properties:
+          responseCode:
+            type: string
+            example: OK
+          message:
+            type: string
+            example: Profile updated successfully.
+          result:
+            type: object
+            properties:
+              id:
+                type: number
+                example: 8
+              email:
+                type: string
+                example: example@mail.com
+              email_verified:
+                type: string
+                example: 'true'
+              name:
+                type: string
+                example: John Deo
+              status:
+                type: string
+                example: ACTIVE
+              has_accepted_terms_and_conditions:
+                type: boolean
+                example: true
+              preferred_language:
+                type: object
+                properties:
+                  value:
+                    type: string
+                    example: english
+                  label:
+                    type: string
+                    example: English
+              organization_id:
+                type: number
+                example: 1
+              roles:
+                type: array
+                items:
+                  type: number
+                example:
+                  - 2
+              created_at:
+                type: string
+                example: '2023-09-20T11:59:37.871Z'
+              updated_at:
+                type: string
+                example: '2023-09-20T11:59:37.871Z'
+              user_roles:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: number
+                      example: 1
+                    title:
+                      type: string
+                      example: mentee
+                    user_type:
+                      type: number
+                      example: 0
+                    status:
+                      type: string
+                      example: ACTIVE
+      shareMentorProfile200Response:
+        type: object
+        properties:
+          responseCode:
+            type: string
+            example: OK
+          message:
+            type: string
+            example: Profile share link generated successfully.
+          result:
+            type: object
+            properties:
+              share_link:
+                type: string
+                example: 52f076629b3749ebf7dcab23f22b30df
+      shareMentorProfileBadRequest400Response:
+        type: object
+        properties:
+          responseCode:
+            type: string
+            example: CLIENT_ERROR
+          message:
+            type: string
+            example: User doesn't exist.
+          error:
+            type: array
+            items:
+              type: string
+            example: []
+    form:
+      createFormRequest:
+        type: object
+        description: Request body for creating a form.
+        required:
+          - type
+          - sub_type
+          - data
+        properties:
+          type:
+            type: string
+            description: The type of the form.
+            example: profile
+          sub_type:
+            type: string
+            description: The sub-type or category of the form.
+            example: profileForm
+          data:
+            type: object
+            description: The main data structure for the form.
+            properties:
+              template_name:
+                type: string
+                description: The name of the template used for the form.
+                example: defaultTemplate
+              fields:
+                type: object
+                description: The fields that make up the form.
+                properties:
+                  controls:
+                    type: array
+                    description: An array of form controls.
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                          description: The name or identifier of the form.
+                          example: name
+                        label:
+                          type: string
+                          description: The label of the form.
+                          example: name
+                        value:
+                          type: string
+                          description: Value of the form
+                          example: ''
+                        class:
+                          type: string
+                          description: The CSS class associated with the form
+                          example: ion-margin
+                        type:
+                          type: string
+                          description: The type of the form control (e.g., text, checkbox).
+                          example: text
+                        position:
+                          type: string
+                          description: The position of the form
+                          example: floating
+                        validators:
+                          description: Validation rules for the form control.
+                          type: object
+                          properties:
+                            required:
+                              type: boolean
+                              description: Indicates if the field is required.
+                              example: true
+                            minLength:
+                              type: number
+                              description: The minimum length allowed for the field.
+                              example: 10
+      createForm200Response:
+        description: Created
+        type: object
+        properties:
+          responseCode:
+            type: string
+            example: OK
+          message:
+            type: string
+            example: Form created successfully
+          result:
+            type: array
+            items:
+              type: string
+            example: []
+      createForm400Response:
+        description: Bad Request. Form Already Exist
+        type: object
+        properties:
+          responseCode:
+            type: string
+            example: CLIENT_ERROR
+          message:
+            type: string
+            example: Form already exists
+          error:
+            type: array
+            items:
+              type: string
+            example: []
+      updateFormRequest:
+        description: Request body for updating a form.
+        type: object
+        required:
+          - type
+          - sub_type
+          - data
+        properties:
+          type:
+            type: string
+            description: The type of the form.
+            example: profile
+          sub_type:
+            type: string
+            description: The sub-type or category of the form.
+            example: profileForm
+          data:
+            type: object
+            description: The main data structure for the form.
+            properties:
+              template_name:
+                type: string
+                description: The name of the template used for the form.
+                example: defaultTemplate
+              fields:
+                type: object
+                description: The fields that make up the form.
+                properties:
+                  controls:
+                    type: array
+                    description: An array of form controls.
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                          description: The name or identifier of the form.
+                          example: name
+                        label:
+                          type: string
+                          description: The label of the form.
+                          example: name
+                        value:
+                          type: string
+                          description: Value of the form
+                          example: ''
+                        class:
+                          type: string
+                          description: The CSS class associated with the form
+                          example: ion-margin
+                        type:
+                          type: string
+                          description: The type of the form control (e.g., text, checkbox).
+                          example: text
+                        position:
+                          type: string
+                          description: The position of the form
+                          example: floating
+                        validators:
+                          description: Validation rules for the form control.
+                          type: object
+                          properties:
+                            required:
+                              type: boolean
+                              description: Indicates if the field is required.
+                              example: true
+                            minLength:
+                              type: number
+                              description: The minimum length allowed for the field.
+                              example: 10
+      updateForm200Response:
+        description: Updated
+        type: object
+        properties:
+          responseCode:
+            type: string
+            example: OK
+          message:
+            type: string
+            example: Form updated successfully
+          result:
+            type: array
+            items:
+              type: string
+            example: []
+      updateForm400Response:
+        description: Bad Request. Form Already Exist
+        type: object
+        properties:
+          responseCode:
+            type: string
+            example: CLIENT_ERROR
+          message:
+            type: string
+            example: Form already exists
+          error:
+            type: array
+            items:
+              type: string
+            example: []
+      readFormRequest:
+        type: object
+        description: Request object for retrieving form details.
+        properties:
+          type:
+            type: string
+            description: Type of form.
+            example: profile
+          sub_type:
+            type: string
+            description: Subtype of the form.
+            example: profileForm
+      readForm200Response:
+        description: Read
+        type: object
+        properties:
+          responseCode:
+            type: string
+            example: OK
+          message:
+            type: string
+            example: Form fetched successfully
+          result:
+            type: object
+            properties:
+              type:
+                type: string
+                example: profile
+              sub_type:
+                type: string
+                example: profileForm
+              updated_at:
+                type: string
+                example: '2022-05-24T23:14:10.080Z'
+              created_at:
+                type: string
+                example: '2022-05-24T23:14:10.080Z'
+              id:
+                type: string
+                example: 2
+              data:
+                type: object
+                properties:
+                  templateName:
+                    type: string
+                    example: defaultTemplate
+                  fields:
+                    type: object
+                    properties:
+                      controls:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                              example: name
+                            label:
+                              type: string
+                              example: name
+                            value:
+                              type: string
+                              example: ''
+                            class:
+                              type: string
+                              example: ion-margin
+                            type:
+                              type: string
+                              example: text
+                            position:
+                              type: string
+                              example: floating
+                            validators:
+                              type: object
+                              properties:
+                                required:
+                                  type: boolean
+                                  example: true
+                                minLength:
+                                  type: number
+                                  example: 10
+      readForm400Response:
+        description: Bad Request. Form not found
+        type: object
+        properties:
+          responseCode:
+            type: string
+            example: CLIENT_ERROR
+          message:
+            type: string
+            example: Form not found
+          error:
+            type: array
+            items:
+              type: string
+            example: []
+    cloudServices:
+      getSampleCSVResponse200:
+        type: object
+        properties:
+          responseCode:
+            type: string
+            example: OK
+          message:
+            type: string
+            example: Download Url Generated Successfully.
+          result:
+            type: string
+            example: >-
+              https://mentoring-dev-storage.s3.ap-south-1.amazonaws.com/sample/bulk_user_creation.csv
+      cloudServicesResponse200:
+        type: object
+        properties:
+          responseCode:
+            type: string
+            example: OK
+          message:
+            type: string
+            example: Signed Url Generated Successfully.
+          result:
+            type: object
+            properties:
+              signed_url:
+                type: string
+                example: >-
+                  https://aws-bucket-storage-name.s3.ap-south-1.amazonaws.com/users/62832531a05cbd57b273aebb-1654149589875-laptop1.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=aws-access-key-id%2F20220602%2Fap-south-1%2Fs3%2Faws4_request&X-Amz-Date=20220602T055949Z&X-Amz-Expires=1800&X-Amz-Signature=0588b16fba45cb85efdc45749173c42ba26b47a9faa9bce5715c666b2657a4d4&X-Amz-SignedHeaders=host
+              file_path:
+                type: string
+                example: users/62832531a05cbd57b273aebb-1654149589875-laptop1.jpg
+              dest_file_ath:
+                type: string
+                example: users/62832531a05cbd57b273aebb-1654149589875-laptop1.jpg
+      cloudServicesDownloadResponse200:
+        type: object
+        properties:
+          responseCode:
+            type: string
+            example: OK
+          message:
+            type: string
+            example: Download Url Generated Successfully.
+          result:
+            type: string
+            example: >-
+              https://aws-bucket-storage-name.s3.ap-south-1.amazonaws.com/users/62832531a05cbd57b273aebb-1654149589875-image.jpg
+    admin:
+      deactivateUser400Response:
+        type: object
+        description: Delete org response
+        properties:
+          responseCode:
+            type: string
+            example: CLIENT_ERROR
+          message:
+            type: string
+            example: Validation failed, Entered data is incorrect!
+          error:
+            items:
+              type: object
+              properties:
+                location:
+                  type: string
+                  example: body
+                param:
+                  type: string
+                  example: id
+                msg:
+                  type: string
+                  example: id must be an array and should not be empty.
+      deactivateUser202Response:
+        type: object
+        description: Delete org response
+        properties:
+          responseCode:
+            type: string
+            example: OK
+          message:
+            type: string
+            example: User deactivated Successfully.
+          result:
+            type: array
+            items:
+              type: string
+            example: []
+      deleteOrg202Response:
+        type: object
+        description: Delete org response
+        properties:
+          responseCode:
+            type: string
+            example: OK
+          message:
+            type: string
+            example: Organization deactivated Successfully.
+          result:
+            type: array
+            items:
+              type: object
+              properties:
+                deactivated_users:
+                  type: integer
+                  example: 100
+      createSystemUserRequest:
+        type: object
+        description: Creates a new system user.
+        required:
+          - name
+          - email
+          - password
+          - secret_code
+        properties:
+          name:
+            type: string
+            example: John Deo
+            description: Name of the system user.
+          email:
+            type: string
+            example: systemuser@mail.com
+            description: Email of the system user.
+          password:
+            type: string
+            format: password
+            example: password
+            description: Password for the system user.
+          secret_code:
+            type: string
+            example: secret_code
+            description: Secret code for system user creation.
+      createSystemUser201Response:
+        type: object
+        description: System User created
+        properties:
+          responseCode:
+            type: string
+            example: OK
+          message:
+            type: string
+            example: Sign-up successful, Please wait while logging in.
+          result:
+            type: array
+            items:
+              type: string
+            example: []
+      createSystemUser406Response:
+        type: object
+        description: System User alreay exist
+        properties:
+          responseCode:
+            type: string
+            example: CLIENT_ERROR
+          message:
+            type: string
+            example: Admin User already exists.
+          error:
+            type: array
+            items:
+              type: string
+            example: []
+      loginSystemUserRequest:
+        type: object
+        description: Login System User Request
+        required:
+          - email
+          - password
+        properties:
+          email:
+            type: string
+            description: Email of the system user.
+            example: systemuser@mail.com
+            required: true
+          password:
+            type: string
+            format: password
+            description: Password of the system user.
+            example: password
+            required: true
+      loginSystemUser200Response:
+        description: System User logged
+        type: object
+        properties:
+          responseCode:
+            type: string
+            example: OK
+          message:
+            type: string
+            example: User logged in successfully.
+          result:
+            type: object
+            properties:
+              access_token:
+                type: string
+                example: >-
+                  eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7Il9pZCI6IjYyOGQ4YjljNGRmOGFkM2ExM2QyODNlNyIsImVtYWlsIjoic3lzdGVtQGFkbWluLmNvbSIsInJvbGUiOiJhZG1pbiJ9LCJpYXQiOjE2NTM0NDQ2MDQsImV4cCI6MTY1MzUzMTAwNH0.l6I0MC16FegRLDym_VwgxFsa97ApUuOKohj2k49cV0I
+              refresh_token:
+                type: string
+                example: >-
+                  eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7Il9pZCI6IjYyOGQ4YjljNGRmOGFkM2ExM2QyODNlNyIsImVtYWlsIjoic3lzdGVtQGFkbWluLmNvbSIsInJvbGUiOiJhZG1pbiJ9LCJpYXQiOjE2NTM0NDQ2MDQsImV4cCI6MTY2OTI1NTgwNH0.TGDhpCVa0hTAbki8Dp5XGtQyqCMXu4Xu9L_72Yr4G1A
+              user:
+                type: object
+                properties:
+                  id:
+                    type: number
+                    example: 7
+                  email:
+                    type: string
+                    example: hilbert29@yahoo.com
+                  email_verified:
+                    type: string
+                    example: true
+                  gender:
+                    type: object
+                    properties:
+                      value:
+                        type: string
+                        example: male
+                      label:
+                        type: string
+                        example: Male
+                  location:
+                    type: array
+                    items:
+                      type: string
+                    example: []
+                  about:
+                    type: string
+                    example: null
+                  share_link:
+                    type: string
+                    example: null
+                  status:
+                    type: string
+                    example: ACTIVE
+                  last_logged_in_at:
+                    type: string
+                    format: date-time
+                    example: '2023-07-25T11:50:35.044Z'
+                  has_accepted_terms_and_conditions:
+                    type: boolean
+                    example: true
+                  languages:
+                    type: array
+                    items:
+                      type: string
+                    example: []
+                  preferred_language:
+                    type: object
+                    properties:
+                      value:
+                        type: string
+                        example: english
+                      label:
+                        type: string
+                        example: English
+                  organization_id:
+                    type: number
+                    example: 1
+                  roles:
+                    type: array
+                    items:
+                      type: number
+                      example: 4
+                  image:
+                    type: string
+                    example: https://cloudstorage.com/container/abc.png
+                  deleted_at:
+                    type: string
+                    example: null
+                  created_at:
+                    type: string
+                    format: date-time
+                    example: '2023-07-24T14:37:56.393Z'
+                  updated_at:
+                    type: string
+                    format: date-time
+                    example: '2023-07-25T11:50:35.044Z'
+                  user_roles:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: number
+                          example: 4
+                        title:
+                          type: string
+                          example: admin
+                        user_type:
+                          type: number
+                          example: 0
+                        status:
+                          type: string
+                          example: ACTIVE
+      loginSystemUser400Response:
+        type: object
+        description: System user doesn't exist
+        properties:
+          responseCode:
+            type: string
+            example: CLIENT_ERROR
+          message:
+            type: string
+            example: User doesn't exist.
+          error:
+            type: array
+            items:
+              type: string
+            example: []
+      deleteUser202Response:
+        type: object
+        description: User Entity Deleted
+        properties:
+          responseCode:
+            type: string
+            example: OK
+          message:
+            type: string
+            example: User deleted successfully
+          result:
+            type: array
+            items:
+              type: object
+              properties:
+                user_id:
+                  type: integer
+                  example: 1
+      deleteUser400Response:
+        type: object
+        description: User Deleted
+        properties:
+          responseCode:
+            type: string
+            example: CLIENT_ERROR
+          message:
+            type: string
+            example: Please enter correct ID
+          error:
+            type: array
+            items:
+              type: string
+            example: []
+    organization:
+      requestOrgRole200Response:
+        type: object
+        description: Role change request response
+        properties:
+          responseCode:
+            type: string
+            example: OK
+          message:
+            type: string
+            example: Mentor role requested successfully
+          result:
+            type: object
+            properties:
+              request_id:
+                type: integer
+                example: 12
+              org_id:
+                type: integer
+                example: 10
+              status:
+                tupe: string
+                example: REQUESTED
+              meta:
+                type: object
+                example: {}
+      createOrganizationRequest:
+        type: object
+        description: Request payload for creating an organization.
+        required:
+          - name
+          - code
+          - description
+        properties:
+          name:
+            type: string
+            example: MentorEd
+            description: The name of the organization.
+          code:
+            type: string
+            example: mentor112
+            description: A unique code representing the organization.
+          description:
+            type: string
+            example: testing
+            description: A brief description of the organization.
+      createOrganization200Response:
+        type: object
+        description: Organization created successfully
+        properties:
+          responseCode:
+            type: string
+            example: OK
+          message:
+            type: string
+            example: Organization created successfully
+          result:
+            type: array
+            items:
+              type: string
+            example: []
+      createOrganization400Response:
+        type: object
+        description: Organization already exists
+        properties:
+          responseCode:
+            type: string
+            example: CLIENT_ERROR
+          message:
+            type: string
+            example: Organization already exists
+          error:
+            type: array
+            items:
+              type: string
+            example: []
+      updateOrganization200Response:
+        type: object
+        description: Organization updated
+        properties:
+          responseCode:
+            type: string
+            example: OK
+          message:
+            type: string
+            example: Organization updated successfully
+          result:
+            type: array
+            items:
+              type: string
+            example: []
+      updateOrganization400Response:
+        type: object
+        description: Organization already exists
+        properties:
+          responseCode:
+            type: string
+            example: CLIENT_ERROR
+          message:
+            type: string
+            example: Organization not found
+          error:
+            type: array
+            items:
+              type: string
+            example: []
+      organizationList200Response:
+        type: object
+        description: Organization list
+        properties:
+          responseCode:
+            type: string
+            example: OK
+          message:
+            type: string
+            example: Organization fetched successfully.
+          result:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: number
+                      example: 1
+                    name:
+                      type: string
+                      example: Shikshalokam
+                    code:
+                      type: string
+                      example: sl
+                    description:
+                      type: string
+                      example: >-
+                        Founded in 2017 ShikshaLokam is an Education Leadership
+                        Catalyst under the aegis of Advaith Foundation.
+              count:
+                type: number
+                example: 1
+    entity-type:
+      createEntityTypeRequest:
+        type: object
+        description: Request payload for creating a new entity type.
+        properties:
+          value:
+            type: string
+            description: Unique identifier for the entity type.
+            example: ln
+          label:
+            type: string
+            description: Descriptive label for the entity type.
+            example: Languages
+          type:
+            type: string
+            description: Type of the entity (e.g., SYSTEM, USER).
+            example: SYSTEM
+          allow_filtering:
+            type: boolean
+            description: Indicates whether filtering is allowed for this entity type.
+            example: true
+          data_type:
+            type: string
+            description: Data type of the entity.
+          has_entities:
+            type: boolean
+            description: Indicates whether the entity type has associated entities.
+            example: STRING
+      updateEntityTypeRequest:
+        type: object
+        description: entity type update request
+        properties:
+          value:
+            type: string
+            description: Unique identifier for the entity type.
+            example: ln
+          label:
+            type: string
+            description: Descriptive label for the entity type.
+            example: Languages
+          type:
+            type: string
+            description: Type of the entity (e.g., SYSTEM, USER).
+            example: SYSTEM
+          allow_filtering:
+            type: boolean
+            description: Indicates whether filtering is allowed for this entity type.
+            example: true
+          data_type:
+            type: string
+            description: Data type of the entity.
+          has_entities:
+            type: boolean
+            description: Indicates whether the entity type has associated entities.
+            example: STRING
+      createEntityType201Response:
+        type: object
+        description: entity type request
+        properties:
+          responseCode:
+            type: string
+            example: OK
+          message:
+            type: string
+            example: Entity type created successfully.
+          result:
+            type: object
+            properties:
+              status:
+                type: string
+                example: ACTIVE
+              id:
+                type: number
+                example: 5
+              value:
+                type: string
+                example: location
+              label:
+                type: string
+                example: Location
+              data_type:
+                type: string
+                example: string
+              created_by:
+                type: number
+                example: 15
+              updated_by:
+                type: number
+                example: 15
+              updated_at:
+                type: string
+                example: '2023-08-09T17:02:12.842Z'
+              created_at:
+                type: string
+                example: '2023-08-09T17:02:12.842Z'
+              allow_filtering:
+                type: string
+                format: nullable
+              deleted_at:
+                type: string
+                example: null
+      createEntityType400Response:
+        type: object
+        description: User entity already exist
+        properties:
+          responseCode:
+            type: string
+            example: CLIENT_ERROR
+          message:
+            type: string
+            example: Entity type already exists
+          error:
+            type: array
+            items:
+              type: string
+            example: []
+      updateEntityType201Response:
+        type: object
+        description: Entity type updated
+        properties:
+          responseCode:
+            type: string
+          message:
+            type: string
+          result:
+            type: object
+            properties:
+              id:
+                type: number
+                example: 1
+              value:
+                type: string
+                example: roles
+              label:
+                type: string
+                example: Roles
+              status:
+                type: string
+                example: ACTIVE
+              created_by:
+                type: string
+                example: '2023-09-06T12:01:09.025Z'
+              updated_by:
+                type: number
+                example: '2023-09-22T12:47:42.510Z'
+              allow_filtering:
+                type: boolean
+                example: true
+              data_type:
+                type: string
+                example: string
+              org_id:
+                type: number
+                example: 1
+              has_entities:
+                type: boolean
+                example: true
+          meta:
+            type: object
+            properties:
+              correlation:
+                type: string
+                example: 5f384234-cd5a-467e-a5ac-b43365d2a7a3
+              meeting_platform:
+                type: string
+                example: BBB
+      updateEntityType400Response:
+        type: object
+        description: User entity already exist
+        properties:
+          responseCode:
+            type: string
+            example: CLIENT_ERROR
+          message:
+            type: string
+            example: Validation failed, Entered data is incorrect!
+          error:
+            type: array
+            items:
+              type: object
+              properties:
+                location:
+                  type: string
+                  example: params
+                param:
+                  type: string
+                  example: id
+                msg:
+                  type: string
+                  example: id param is empty
+      deleteUserEntity202Response:
+        type: object
+        description: Entity Deleted
+        properties:
+          responseCode:
+            type: string
+            example: OK
+          message:
+            type: string
+            example: Entity deleted successfully
+          result:
+            type: array
+            items:
+              type: string
+            example: []
+      deleteUserEntity400Response:
+        type: object
+        description: Entity not found
+        properties:
+          responseCode:
+            type: string
+            example: CLIENT_ERROR
+          message:
+            type: string
+            example: Entity not found
+          error:
+            type: array
+            items:
+              type: string
+            example: []
+    userRole:
+      userRoleListResponse200:
+        type: object
+        description: Organization list
+        properties:
+          responseCode:
+            type: string
+            example: OK
+          message:
+            type: string
+            example: User Role list fetched successfully.
+          result:
+            type: array
+            items:
+              type: object
+              properties:
+                id:
+                  type: number
+                  example: 1
+                title:
+                  type: string
+                  example: mentor
+                user_type:
+                  type: number
+                  example: 0
+                status:
+                  type: string
+                  example: ACTIVE
+                created_at:
+                  type: string
+                  format: date-time
+                  example: '2023-08-07T11:27:23.560Z'
+                updated_at:
+                  type: string
+                  format: date-time
+                  example: '2023-08-07T11:27:23.560Z'
+                deleted_at:
+                  type: date-time
+                  example: null
+    userentity:
+      createUserEntityRequest:
+        type: object
+        required:
+          - value
+          - label
+          - type
+          - entity_type_id
+        properties:
+          value:
+            type: string
+            example: AP
+          label:
+            type: string
+            example: Andhra Pradesh
+          type:
+            type: string
+            example: string
+          entity_type_id:
+            type: integer
+            example: 4
+      createUserEntity201Response:
+        type: object
+        description: User entity created
+        properties:
+          responseCode:
+            type: string
+            example: OK
+          message:
+            type: string
+            example: Entity created successfully
+          result:
+            type: array
+            items:
+              type: string
+            example: []
+      createUserEntity400Response:
+        type: object
+        description: Entity already exists
+        properties:
+          responseCode:
+            type: string
+            example: CLIENT_ERROR
+          message:
+            type: string
+            example: Entity already exists
+          error:
+            type: array
+            items:
+              type: string
+            example: []
+      updateUserEntity400Response:
+        type: object
+        description: Entity not found
+        properties:
+          responseCode:
+            type: string
+            example: CLIENT_ERROR
+          message:
+            type: string
+            example: Entity not found
+          error:
+            type: array
+            items:
+              type: string
+            example: []
+      readUserEntity200Response:
+        description: Entity fetched successfully
+        type: object
+        properties:
+          responseCode:
+            type: string
+            example: OK
+          message:
+            type: string
+            example: Entity fetched successfully
+          result:
+            type: array
+            items:
+              type: object
+              properties:
+                id:
+                  type: number
+                  example: 1
+                entity_type_id:
+                  type: number
+                  example: 1
+                value:
+                  type: string
+                  example: AP
+                label:
+                  type: string
+                  example: Andhra Pradesh
+                status:
+                  type: string
+                  example: ACTIVE
+                type:
+                  type: string
+                  example: system
+                created_by:
+                  type: string
+                  example: null
+                updated_by:
+                  type: string
+                  example: null
+                created_at:
+                  type: string
+                  example: '2023-08-07T11:27:23.573Z'
+                updated_at:
+                  type: string
+                  example: '2023-08-07T11:27:23.573Z'
+                deleted_at:
+                  type: string
+                  example: null
+      deleteUserEntity202Response:
+        type: object
+        description: Entity Deleted
+        properties:
+          responseCode:
+            type: string
+            example: OK
+          message:
+            type: string
+            example: Entity deleted successfully
+          result:
+            type: array
+            items:
+              type: string
+            example: []
+      deleteUserEntity400Response:
+        type: object
+        description: Entity not found
+        properties:
+          responseCode:
+            type: string
+            example: CLIENT_ERROR
+          message:
+            type: string
+            example: Entity not found
+          error:
+            type: array
+            items:
+              type: string
+            example: []
+    notification:
+      createNotificationRequest:
+        type: object
+        description: Notificaion Create
+        properties:
+          type:
+            type: string
+            description: Type of email
+            example: email
+          code:
+            type: string
+            description: Unique code for the email configuration
+            example: tl-email-invite
+          subject:
+            type: string
+            description: Subject of the email
+            example: Hi Welcome Back
+          body:
+            type: string
+            description: Body of the email
+            example: <p>Dear User,</p> Welcome back to mentorEd
+          email_header:
+            type: string
+            description: Email header content
+            example: email_header
+          email_footer:
+            type: string
+            description: Email footer content
+            example: email_footer
+      createNotification200Response:
+        type: object
+        description: Notificaion success response
+        properties:
+          responseCode:
+            type: string
+            example: OK
+          message:
+            type: string
+            example: Notification template created successfully
+          result:
+            type: object
+            properties:
+              status:
+                type: string
+                example: ACTIVE
+              id:
+                type: number
+                example: 13
+              type:
+                type: string
+                example: email
+              code:
+                type: string
+                example: tl-email-invite
+              subject:
+                type: string
+                example: Hi Welcome Backk
+              body:
+                type: string
+                example: <p>Dear User</p> Welcome back to mentorEd
+              email_header:
+                type: string
+                example: email_header
+              email_footer:
+                type: string
+                example: email_footer
+              organization_id:
+                type: number
+                example: 2
+              created_by:
+                type: string
+                example: 9
+              updated_at:
+                type: string
+                format: date-time
+                example: '2023-12-05T06:55:42.178Z'
+              created_at:
+                type: string
+                format: date-time
+                example: '2023-12-05T06:55:42.178Z'
+              updated_by:
+                type: integer
+                example: 9
+              deleted_at:
+                type: string
+                example: null
+      createNotification400Response:
+        type: object
+        description: Notificaion 400 response
+        properties:
+          responseCode:
+            type: string
+            example: CLIENT_ERROR
+          statusCode:
+            type: number
+            example: 400
+          message:
+            type: string
+            example: User does't have admin access.
+    org-admin:
+      inheritEntityTypeRequest:
+        type: object
+        description: Inherit entity type
+        properties:
+          entity_type_value:
+            type: string
+            example: categories
+          target_entity_type_label:
+            type: string
+            example: training
+      inheritEntityType202Response:
+        type: object
+        description: Inherit entity type response
+        properties:
+          responseCode:
+            type: string
+            example: OK
+          message:
+            type: string
+            example: Entity type created successfully
+          result:
+            type: object
+            properties:
+              id:
+                type: number
+                example: 6
+              value:
+                type: string
+                example: medium
+              label:
+                type: string
+                example: Hindi
+              status:
+                type: string
+                example: ACTIVE
+              created_by:
+                type: number
+                example: 9
+              updated_by:
+                type: number
+                example: 9
+              allow_filtering:
+                type: boolean
+              data_type:
+                type: string
+                example: ARRAY[STRING]
+              organization_id:
+                type: number
+                example: 2
+              parent_id:
+                type: number
+                example: 1
+              allow_custom_entities:
+                type: boolean
+              has_entities:
+                type: boolean
+              model_names:
+                type: array
+                items:
+                  type: string
+                  example: session
+              created_at:
+                type: string
+                format: date-time
+                example: '2023-11-29T10:16:56.236Z'
+              updated_at:
+                type: string
+                format: date-time
+                example: '2023-12-05T09:04:02.566Z'
+              deleted_at:
+                type: string
+                example: null
+    securitySchemes:
+      bearer:
+      type: apiKey
+      name: X-auth-token
+      in: header
+tags:
+  - name: User Roles APIs
+    description: ''
+    externalDocs:
+      description: ''
+      url: ''
+  - name: Permissions
+    description: ''
+    externalDocs:
+      description: ''
+      url: ''
+  - name: Modules
+    description: ''
+    externalDocs:
+      description: ''
+      url: ''
+  - name: RolePermissionMapping
+    description: ''
+    externalDocs:
+      description: ''
+      url: ''
