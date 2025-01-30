@@ -36,3 +36,12 @@ teacher-tool/*.hot-update.*
 .env.development.local
 .env.test.local
 .env.production.local
+
+
+backend/user-service/user/src/.env
+teacher-diary/backend/user-service/user/src/.env
+backend/user-service/user/src/package.json
+backend/user-service/user/src/user.log
+backend/user-service/user/src/package-lock.json
+backend/user-service/user/src/.env
+backend/user-service/user/src/.env
