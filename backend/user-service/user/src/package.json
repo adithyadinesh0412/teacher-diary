@@ -81,7 +81,7 @@
 		"@faker-js/faker": "^7.4.0",
 		"@shelf/jest-mongodb": "^3.0.2",
 		"eslint": "^8.16.0",
-		"husky": "^8.0.1",
+		"husky": "^8.0.3",
 		"jest-html-reporters": "^3.0.11",
 		"jest-json-schema": "^6.1.0",
 		"jest-junit": "^14.0.1",

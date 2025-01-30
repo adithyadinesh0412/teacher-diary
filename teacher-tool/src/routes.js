@@ -1,6 +1,11 @@
 import React from 'react'
+// import Teachers from './views/teachers/teachers'
 
 const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'))
+const Classes = React.lazy(() => import('./views/classes/Classes'))
+const Teachers = React.lazy(() => import('./views/teachers/teachers'))
+const Students = React.lazy(() => import('./views/students/Students'))
+const ParentHome = React.lazy(() => import('./views/parentHome/ParentHome'))
 const Colors = React.lazy(() => import('./views/theme/colors/Colors'))
 const Typography = React.lazy(() => import('./views/theme/typography/Typography'))
 
@@ -54,6 +59,10 @@ const Widgets = React.lazy(() => import('./views/widgets/Widgets'))
 const routes = [
   { path: '/', exact: true, name: 'Home' },
   { path: '/dashboard', name: 'Dashboard', element: Dashboard },
+  { path: '/classes', name: 'Classes', element: Classes },
+  { path: '/teachers', name: 'Teachers', element: Teachers },
+  { path: '/students', name: 'Students', element: Students },
+  { path: '/parentHome', name: 'ParentHome', element: ParentHome },
   { path: '/theme', name: 'Theme', element: Colors, exact: true },
   { path: '/theme/colors', name: 'Colors', element: Colors },
   { path: '/theme/typography', name: 'Typography', element: Typography },

@@ -6,9 +6,15 @@ import SimpleBar from 'simplebar-react'
 import 'simplebar-react/dist/simplebar.min.css'
 
 import { CBadge, CNavLink, CSidebarNav } from '@coreui/react'
-
+const getUserRole = (role) => {
+  const roles = localStorage.getItem('roles').split(",")
+  console.log("roles : : : : :: :  ======> ",roles,role,roles.includes(role))
+  return roles.includes(role)
+}
 export const AppSidebarNav = ({ items }) => {
-  const navLink = (name, icon, badge, indent = false) => {
+  const navLink = (name, icon, badge, indent = false  ) => {
+    console.log("-=-=-=-=-=-=-=======>",items.showForRole)
+    if(!getUserRole(items.showForRole)) return null;
     return (
       <>
         {icon
@@ -24,9 +30,10 @@ export const AppSidebarNav = ({ items }) => {
             {badge.text}
           </CBadge>
         )}
+        
       </>
-    )
-  }
+    )}
+  
 
   const navItem = (item, index, indent = false) => {
     const { component, name, badge, icon, ...rest } = item

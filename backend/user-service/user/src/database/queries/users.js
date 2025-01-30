@@ -216,6 +216,8 @@ exports.listUsersFromView = async (
 				users.email,
                 users.about,
                 users.image,
+                users.created_at,
+                users.status,
                 jsonb_build_object(
                     'id', organization.id,
                     'name', organization.name,

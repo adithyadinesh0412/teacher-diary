@@ -23,7 +23,7 @@ module.exports = {
 		'/user/v1/user/share',
 		'/user/v1/admin/triggerViewRebuildInternal',
 		'/user/v1/admin/triggerPeriodicViewRefreshInternal',
-		'/user/v1/account/search',
+		// '/user/v1/account/search',
 		'/user/v1/organization/list',
 		'/user/v1/user-role/default',
 		'/user/v1/account/validateUserSession',

@@ -24,14 +24,17 @@ import CIcon from '@coreui/icons-react'
 
 import avatar8 from '../../assets/images/avatars/8.jpg'
 import apiService from '../../services/apiService'
-import { AuthContext } from '../../services/AuthContext';
+
 
 const AppHeaderDropdown = () => {
   const handleLogout = async (e) => {
-    // e.preventDefault();
-    await apiService.logout();
-    const { logout } = useContext(AuthContext);
-    window.location.href = '/logout'; // Or use React Router's `useNavigate`
+    try{
+      await apiService.logout();
+      window.location.href = '/dashboard'; // Or use React Router's `useNavigate`
+
+    }catch(error){
+      console.log("-=-==-=-=-=-=-=->> ",error)
+    }
   }
   return (
     <CDropdown variant="nav-item">

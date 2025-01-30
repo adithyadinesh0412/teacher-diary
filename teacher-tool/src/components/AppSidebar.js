@@ -19,10 +19,14 @@ import { sygnet } from 'src/assets/brand/sygnet'
 // sidebar nav config
 import navigation from '../_nav'
 
+
+
 const AppSidebar = () => {
   const dispatch = useDispatch()
   const unfoldable = useSelector((state) => state.sidebarUnfoldable)
   const sidebarShow = useSelector((state) => state.sidebarShow)
+
+  console.log("NAV : ",navigation)
 
   return (
     <CSidebar

@@ -21,6 +21,9 @@ const apiService = {
     
         try {
           const response = await axios(config);
+          if(response.status == 401){
+            logout()
+          }
           return response.data; // Axios automatically parses the response data
         } catch (error) {
           console.error('API request failed:', error);
@@ -65,9 +68,14 @@ const apiService = {
         refresh_token : refreshToken
     } , true);
   },
-
+  
   createUser(userData) {
     return this.request(API_ENDPOINTS.USERS, 'POST', userData);
+  },
+  async searchUsers(userData,params) {
+    const url = API_ENDPOINTS.SEARCH + params
+    const res = await this.request(url,'USER' , 'POST', userData,true);
+    return res
   },
 
   getProducts() {

@@ -25,6 +25,7 @@
     "@coreui/icons-react": "^2.3.0",
     "@coreui/react": "^5.4.1",
     "@coreui/react-chartjs": "^3.0.0",
+    "@coreui/react-pro": "^5.11.0",
     "@coreui/utils": "^2.0.2",
     "@popperjs/core": "^2.11.8",
     "axios": "^1.7.9",
