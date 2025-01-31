@@ -6,15 +6,19 @@ import SimpleBar from 'simplebar-react'
 import 'simplebar-react/dist/simplebar.min.css'
 
 import { CBadge, CNavLink, CSidebarNav } from '@coreui/react'
-const getUserRole = (role) => {
-  const roles = localStorage.getItem('roles').split(",")
-  console.log("roles : : : : :: :  ======> ",roles,role,roles.includes(role))
-  return roles.includes(role)
+
+const getUserRole = (roles,item) => {
+  console.log(item)
+  if(!roles) return true
+  const userRoles = localStorage.getItem('roles').split(",")
+  roles.forEach((role) => {
+    console.log(userRoles,role,userRoles.includes(role))
+    if(userRoles.includes(role)) return true
+  })
+  return false
 }
 export const AppSidebarNav = ({ items }) => {
   const navLink = (name, icon, badge, indent = false  ) => {
-    console.log("-=-=-=-=-=-=-=======>",items.showForRole)
-    if(!getUserRole(items.showForRole)) return null;
     return (
       <>
         {icon
@@ -39,7 +43,7 @@ export const AppSidebarNav = ({ items }) => {
     const { component, name, badge, icon, ...rest } = item
     const Component = component
     return (
-      <Component as="div" key={index}>
+      <Component as="div" key={index} >
         {rest.to || rest.href ? (
           <CNavLink
             {...(rest.to && { as: NavLink })}
@@ -70,7 +74,7 @@ export const AppSidebarNav = ({ items }) => {
   return (
     <CSidebarNav as={SimpleBar}>
       {items &&
-        items.map((item, index) => (item.items ? navGroup(item, index) : navItem(item, index)))}
+        items.map((item, index) => (item.items ? navGroup(item, index) : (getUserRole(item?.showForRole,item) ?  navItem(item, index) : navItem(item, index))))}
     </CSidebarNav>
   )
 }

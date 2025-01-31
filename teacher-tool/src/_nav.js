@@ -22,6 +22,7 @@ import { CNavGroup, CNavItem, CNavTitle } from '@coreui/react'
 const _nav = [
   {
     component: CNavItem,
+    showForRole : ['admin'],
     name: 'Home',
     to: '/dashboard',
     icon: <CIcon icon={cilSpeedometer} customClassName="nav-icon" />,
@@ -29,7 +30,6 @@ const _nav = [
       color: 'info',
       text: 'NEW',
     },
-    showForRole : 'abc'
   },
   {
     component: CNavItem,
@@ -40,14 +40,13 @@ const _nav = [
       color: 'info',
       text: 'NEW',
     },
-    showForRole : 'teacher'
+    showForRole : ['teacher']
   },
   {
     component: CNavItem,
     name: 'Classes',
     to: '/classes',
     icon: <CIcon icon={cilBook} customClassName="nav-icon" />,
-    showForRole : 'abc'
     // 
   },
   {
@@ -55,7 +54,6 @@ const _nav = [
     name: 'Teachers',
     to: '/teachers',
     icon: <CIcon icon={cilPeople} customClassName="nav-icon" />,
-    showForRole : 'abc'
     // 
   },
   {
@@ -63,7 +61,6 @@ const _nav = [
     name: 'Students',
     to: '/students',
     icon: <CIcon icon={cilChild} customClassName="nav-icon" />,
-    showForRole : 'abc'
     // 
   },
   {
@@ -75,26 +72,22 @@ const _nav = [
     name: 'Colors',
     to: '/theme/colors',
     icon: <CIcon icon={cilDrop} customClassName="nav-icon" />,
-    showForRole : 'abc'
   },
   {
     component: CNavItem,
     name: 'Typography',
     to: '/theme/typography',
     icon: <CIcon icon={cilPencil} customClassName="nav-icon" />,
-    showForRole : 'abc'
   },
   {
     component: CNavTitle,
     name: 'Components',
-    showForRole : 'abc'
   },
   {
     component: CNavGroup,
     name: 'Base',
     to: '/base',
     icon: <CIcon icon={cilPuzzle} customClassName="nav-icon" />,
-    showForRole : 'abc',
     items: [
       {
         component: CNavItem,
@@ -228,7 +221,6 @@ const _nav = [
     component: CNavGroup,
     name: 'Buttons',
     to: '/buttons',
-    showForRole : 'abc',
     icon: <CIcon icon={cilCursor} customClassName="nav-icon" />,
     items: [
       {
@@ -265,7 +257,6 @@ const _nav = [
   {
     component: CNavGroup,
     name: 'Forms',
-    showForRole : 'abc',
     icon: <CIcon icon={cilNotes} customClassName="nav-icon" />,
     items: [
       {
@@ -393,13 +384,11 @@ const _nav = [
     component: CNavItem,
     name: 'Charts',
     to: '/charts',
-    showForRole : 'abc',
     icon: <CIcon icon={cilChartPie} customClassName="nav-icon" />,
   },
   {
     component: CNavGroup,
     name: 'Icons',
-    showForRole : 'abc',
     icon: <CIcon icon={cilStar} customClassName="nav-icon" />,
     items: [
       {
@@ -423,7 +412,6 @@ const _nav = [
     component: CNavGroup,
     name: 'Notifications',
     icon: <CIcon icon={cilBell} customClassName="nav-icon" />,
-    showForRole : 'abc',
     items: [
       {
         component: CNavItem,
@@ -451,7 +439,6 @@ const _nav = [
     component: CNavItem,
     name: 'Widgets',
     to: '/widgets',
-    showForRole : 'abc',
     icon: <CIcon icon={cilCalculator} customClassName="nav-icon" />,
     badge: {
       color: 'info',
@@ -461,12 +448,10 @@ const _nav = [
   {
     component: CNavTitle,
     name: 'Extras',
-    showForRole : 'abc',
   },
   {
     component: CNavGroup,
     name: 'Pages',
-    showForRole : 'abc',
     icon: <CIcon icon={cilStar} customClassName="nav-icon" />,
     items: [
       {
@@ -494,7 +479,6 @@ const _nav = [
   {
     component: CNavItem,
     name: 'Docs',
-    showForRole : 'abc',
     href: 'https://coreui.io/react/docs/templates/installation/',
     icon: <CIcon icon={cilDescription} customClassName="nav-icon" />,
   },

@@ -26,7 +26,6 @@ const AppSidebar = () => {
   const unfoldable = useSelector((state) => state.sidebarUnfoldable)
   const sidebarShow = useSelector((state) => state.sidebarShow)
 
-  console.log("NAV : ",navigation)
 
   return (
     <CSidebar
