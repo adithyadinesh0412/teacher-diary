@@ -1,61 +1,99 @@
-import React, { useState } from 'react';
+import React, { useState , useEffect } from 'react';
 import { CSmartTable } from '@coreui/react-pro';
-import { CButton, CButtonGroup } from '@coreui/react';
-import { cilPencil, cilTrash } from '@coreui/icons';
+import { CButton, CButtonGroup, CModal, CModalHeader, CModalTitle, CModalBody, CModalFooter, CForm, CFormInput, CFormSelect } from '@coreui/react';
+import { cilPencil, cilTrash , cilPlus } from '@coreui/icons';
 import CIcon from '@coreui/icons-react';
+import apiService from '../../services/apiService'
 
-
-const tableData = [
-  { id: 1, name: 'John Doe', age: 25, class: 'Math' },
-  { id: 2, name: 'Jane Smith', age: 30, class: 'Science' },
-  { id: 3, name: 'Alice Johnson', age: 28, class: 'History' },
-  { id: 1, name: 'John Doe', age: 25, class: 'Math' },
-  { id: 2, name: 'Jane Smith', age: 30, class: 'Science' },
-  { id: 3, name: 'Alice Johnson', age: 28, class: 'History' },
-  { id: 1, name: 'John Doe', age: 25, class: 'Math' },
-  { id: 2, name: 'Jane Smith', age: 30, class: 'Science' },
-  { id: 3, name: 'Alice Johnson', age: 28, class: 'History' },
-];
-
-const tableColumns = [
-  { key: 'name', label: 'Name' },
-  { key: 'age', label: 'Age' },
-  { key: 'class', label: 'Class' },
-  { key: 'actions', label: 'Actions' },
-];
 
 const Classes = () => {
-  const [selectedRows, setSelectedRows] = useState([]);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [classData, setClassData] = useState([]);
+  const [classColumnData, setclassColumnData] = useState([]);
+  const [formData, setFormData] = useState({ id: undefined , name: '' });
+  const [fetchTrigger, setFetchTrigger] = useState(true);
 
-  const handleEdit = (item) => {
-    console.log('Edit:', item);
+  useEffect(() => {
+    const fetchClassList = async () => {
+      try {
+        const data = await apiService.getClassList();
+        
+        const classList = data.result.data
+        // Generate tableColumns dynamically
+        const tableColumns = Object.keys(classList[0]).map((key) => ({
+          key,
+          label: key.replace(/_/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase()) // Format label
+        }));
+
+        // Add actions column
+        tableColumns.push({ key: 'actions', label: 'Actions' });
+        
+        // Generate tableData dynamically
+        const tableData = classList.map(item => ({ ...item }));
+        setclassColumnData(tableColumns)
+        setClassData(tableData)
+      } catch (error) {
+        console.error('Error fetching posts:', error);
+      }
+    };
+
+    if (fetchTrigger) {
+      fetchClassList()
+      setFetchTrigger(false)
+    };
+  }, [fetchTrigger]);
+
+  const handleEdit = async (item) => {
+    await setFormData({
+      id : item.id,
+      name : item.name
+    })
+    console.log("FORM DATA : : : :  ",formData)
+    setModalVisible(true);
+  };
+  const handleModalClose = (item) => {
+    setFormData({
+      name : ''
+    })
+    setModalVisible(false);
   };
 
   const handleDelete = (item) => {
     console.log('Delete:', item);
   };
 
-  const handleRowSelect = (selectedItems) => {
-    setSelectedRows(selectedItems);
-    console.log('Selected Rows:', selectedItems);
+  const handleAdd = () => {
+    setModalVisible(true);
+  };
+
+  const handleFormChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleFormSubmit = async () => {
+    if(formData?.id == undefined){
+      await apiService.createClass(formData)
+    }else{
+      await apiService.updateClass(formData)
+    }
+
+    setFetchTrigger(true)
+    setModalVisible(false);
   };
 
   return (
     <div>
-      <h1>Class List
-      <CButton color="info" onClick={() => handleEdit(item)}>
-        <CIcon icon={cilPencil} /> ADD
-      </CButton>
-
-
+      <h1>Class List {' '}
+        <CButton color="success" onClick={handleAdd}>
+          <CIcon icon={cilPlus} /> ADD
+        </CButton>
       </h1>
       <CSmartTable
-        columns={tableColumns}
-        items={tableData}
+        columns={classColumnData}
+        items={classData}
         itemsPerPage={5}
         pagination
-        // selectable
-        onSelectedItemsChange={handleRowSelect}
         tableHeadProps={{ color: 'primary' }}
         tableProps={{ striped: true, hover: true }}
         scopedColumns={{
@@ -74,16 +112,36 @@ const Classes = () => {
           ),
         }}
       />
-      {/* {selectedRows.length > 0 && (
-        <div style={{ marginTop: '20px' }}>
-          <strong>Selected Rows:</strong>
-          <ul>
-            {selectedRows.map((row) => (
-              <li key={row.id}>{row.name} (ID: {row.id})</li>
-            ))}
-          </ul>
-        </div>
-      )} */}
+
+      {/* Modal for Adding a New Entry */}
+      <CModal visible={modalVisible} onClose={() => handleModalClose()}>
+        <CModalHeader>
+          <CModalTitle>Add New Entry</CModalTitle>
+        </CModalHeader>
+        <CModalBody>
+          <CForm>
+            <CFormInput
+              type="text"
+              label="Name"
+              name="name"
+              value={formData.name}
+              onChange={handleFormChange}
+              placeholder="Enter Name"
+            />
+          </CForm>
+        </CModalBody>
+        <CModalFooter>
+          <CButton color="secondary" onClick={() =>  handleModalClose()}>
+            Cancel
+          </CButton>
+          <CButton color="primary" onClick={() => { 
+
+            handleFormSubmit()
+            }}>
+            Submit
+          </CButton>
+        </CModalFooter>
+      </CModal>
     </div>
   );
 };

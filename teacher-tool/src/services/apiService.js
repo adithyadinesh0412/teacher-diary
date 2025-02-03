@@ -1,10 +1,11 @@
 // src/services/apiService.js
-import { API_BASE_URL, DEFAULT_HEADERS, API_ENDPOINTS , APP_BASE_NAMES} from '../configs/apiConfig'
+import { BASE_URLS , DEFAULT_HEADERS, API_ENDPOINTS , APP_BASE_NAMES} from '../configs/apiConfig'
 import axios from 'axios';
 
 const apiService = {
     async request(endpoint, appName, method = 'GET', data = null, addHeader = true) {
         const APP = APP_BASE_NAMES[`${appName}`];
+        const API_BASE_URL = BASE_URLS[`${appName}_BASE_URL`]
         const url = `${API_BASE_URL}/${APP}/${endpoint}`;
     
         // Axios configuration
@@ -21,6 +22,7 @@ const apiService = {
     
         try {
           const response = await axios(config);
+
           if(response.status == 401){
             logout()
           }
@@ -75,6 +77,24 @@ const apiService = {
   async searchUsers(userData,params) {
     const url = API_ENDPOINTS.SEARCH + params
     const res = await this.request(url,'USER' , 'POST', userData,true);
+    return res
+  },
+
+  async getClassList() {
+    const url = API_ENDPOINTS.CLASSLIST
+    const res = await this.request(url,'PTD' , 'GET', {},true);
+    return res
+  },
+  async createClass(userData) {
+    const url = API_ENDPOINTS.CREATECLASS
+    const res = await this.request(url,'PTD' , 'POST', userData,true);
+    return res
+  },
+  async updateClass(userData) {
+    const url = API_ENDPOINTS.UPDATECLASS + userData.id
+    const res = await this.request(url,'PTD' , 'POST', {
+      name : userData.name
+    },true);
     return res
   },
 
