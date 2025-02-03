@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react'
 import PropTypes from 'prop-types'
-
+import './widget.css';
 import {
   CRow,
   CCol,
@@ -39,18 +39,18 @@ const WidgetsDropdown = (props) => {
 
   return (
     <CRow className={props.className} xs={{ gutter: 4 }}>
-      <CCol sm={6} xl={4} xxl={3}>
+      <CCol sm={6} xl={4} xxl={3} className="fixed-height-widget">
         <CWidgetStatsA
           color="primary"
           value={
             <>
-              26K{' '}
+              5{' '}
               <span className="fs-6 fw-normal">
-                (-12.4% <CIcon icon={cilArrowBottom} />)
+                {/* (-12.4% <CIcon icon={cilArrowBottom} />) */}
               </span>
             </>
           }
-          title="Users"
+          title="Classes"
           action={
             <CDropdown alignment="end">
               <CDropdownToggle color="transparent" caret={false} className="text-white p-0">
@@ -70,16 +70,8 @@ const WidgetsDropdown = (props) => {
               className="mt-3 mx-3"
               style={{ height: '70px' }}
               data={{
-                labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-                datasets: [
-                  {
-                    label: 'My First dataset',
-                    backgroundColor: 'transparent',
-                    borderColor: 'rgba(255,255,255,.55)',
-                    pointBackgroundColor: getStyle('--cui-primary'),
-                    data: [65, 59, 84, 84, 51, 55, 40],
-                  },
-                ],
+                labels: [],
+                datasets: [],
               }}
               options={{
                 plugins: {
@@ -131,16 +123,16 @@ const WidgetsDropdown = (props) => {
       </CCol>
       <CCol sm={6} xl={4} xxl={3}>
         <CWidgetStatsA
-          color="info"
+          color="Students"
           value={
             <>
-              $6.200{' '}
+              45
               <span className="fs-6 fw-normal">
-                (40.9% <CIcon icon={cilArrowTop} />)
+                {/* (40.9% <CIcon icon={cilArrowTop} />) */}
               </span>
             </>
           }
-          title="Income"
+          title="Students"
           action={
             <CDropdown alignment="end">
               <CDropdownToggle color="transparent" caret={false} className="text-white p-0">
@@ -160,15 +152,8 @@ const WidgetsDropdown = (props) => {
               className="mt-3 mx-3"
               style={{ height: '70px' }}
               data={{
-                labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+                labels: [],
                 datasets: [
-                  {
-                    label: 'My First dataset',
-                    backgroundColor: 'transparent',
-                    borderColor: 'rgba(255,255,255,.55)',
-                    pointBackgroundColor: getStyle('--cui-info'),
-                    data: [1, 18, 9, 17, 34, 22, 11],
-                  },
                 ],
               }}
               options={{
@@ -218,7 +203,7 @@ const WidgetsDropdown = (props) => {
           }
         />
       </CCol>
-      <CCol sm={6} xl={4} xxl={3}>
+      {/* <CCol sm={6} xl={4} xxl={3}>
         <CWidgetStatsA
           color="warning"
           value={
@@ -383,7 +368,7 @@ const WidgetsDropdown = (props) => {
             />
           }
         />
-      </CCol>
+      </CCol> */}
     </CRow>
   )
 }

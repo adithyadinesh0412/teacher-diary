@@ -131,14 +131,14 @@ const PostComponent = () => {
                   <CIcon icon={cilThumbUp} size="l" className="me-1" />
               </CButton>
             <CButton color="link">
-                  <CIcon icon={cilShortText} onClick={() => toggleComments()} size="l" className="me-1" />
+                  <CIcon icon={cilShortText} onClick={() => toggleComments(post.id)} size="l" className="me-1" />
               </CButton>
               
               {/* <CIcon icon={cilShare} /> */}
             </div>
 
             {/* Comments Section */}
-            <div id="comments-section" className="comments-section">
+            <div id={`comments-section-${post.id}`} className="comments-section">
               {post.comments.slice(0, visibleComments[post.id]).map((comment) => (
                 <div key={comment.id} className="comment">
                   <div className="comment-content">

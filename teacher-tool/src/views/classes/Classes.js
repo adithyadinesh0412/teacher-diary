@@ -42,7 +42,13 @@ const Classes = () => {
 
   return (
     <div>
-      <h1>Class List</h1>
+      <h1>Class List
+      <CButton color="info" onClick={() => handleEdit(item)}>
+        <CIcon icon={cilPencil} /> ADD
+      </CButton>
+
+
+      </h1>
       <CSmartTable
         columns={tableColumns}
         items={tableData}

@@ -1,0 +1,4 @@
+.fixed-height-widget {
+    height: 150px; /* Set as per your requirement */
+    min-height: 150px;
+  }

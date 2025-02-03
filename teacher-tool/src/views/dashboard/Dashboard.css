@@ -1,0 +1,139 @@
+.status-card {
+    max-width: 600px;
+    margin: 10px auto;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    border: none;
+  }
+  
+  .status-container {
+    margin-left: 0; /* Align to left */
+    margin-right: auto;
+  }
+  
+  .status-input {
+    width: 100%;
+    border-radius: 20px;
+    padding: 12px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    resize: none;
+    transition: border 0.3s ease-in-out;
+  }
+  
+  .status-input:focus {
+    border-color: #1877f2;
+    outline: none;
+  }
+  
+  .status-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Reduce space between items */
+    margin-top: 5px; /* Reduce top margin */
+  }
+  
+  .dropdown-toggle {
+    border-radius: 20px;
+    padding: 6px 12px;
+  }
+  
+  .post-button {
+    border-radius: 20px;
+    padding: 6px 16px;
+  }
+
+  .status-actions button,
+.status-actions .dropdown {
+  padding: 6px 12px; /* Adjust padding for a more compact look */
+  margin: 0; /* Remove any extra margins */
+}
+
+.post-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 1rem;
+  }
+  
+  .post-card {
+    margin-bottom: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .post-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+  
+  .profile-picture {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 0.75rem;
+  }
+  
+  .post-user-info {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .post-time {
+    font-size: 0.875rem;
+    color: #666;
+  }
+  
+  .post-content {
+    font-size: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .post-actions {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  /* .comments-section {
+    margin-top: 1rem;
+  } */
+  
+  .comment {
+    margin-bottom: 0.75rem;
+    padding: 0.5rem;
+    /* background-color: #f9f9f9; */
+    border-radius: 4px;
+  }
+  
+  .reply {
+    margin-left: 1.5rem;
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+    /* background-color: #f0f0f0; */
+    border-radius: 4px;
+  }
+  
+  .add-comment {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+  }
+  
+  .reply-input {
+    margin-top: 0.5rem;
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .card {
+    height: 100%;
+    min-height: 400px;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .comments-section {
+    max-height: 300px;
+    overflow-y: auto;
+  }
