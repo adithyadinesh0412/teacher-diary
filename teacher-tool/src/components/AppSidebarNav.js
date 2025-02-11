@@ -74,7 +74,7 @@ export const AppSidebarNav = ({ items }) => {
   return (
     <CSidebarNav as={SimpleBar}>
       {items &&
-        items.map((item, index) => (item.items ? navGroup(item, index) : (getUserRole(item?.showForRole,item) ?  navItem(item, index) : navItem(item, index))))}
+        items.map((item, index) => (item.items ? navGroup(item, index) : ( true ?  navItem(item, index) : navItem(item, index))))}
     </CSidebarNav>
   )
 }

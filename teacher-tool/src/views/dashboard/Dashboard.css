@@ -118,6 +118,7 @@
     display: flex;
     gap: 0.5rem;
     margin-top: 1rem;
+
   }
   
   .reply-input {
@@ -136,4 +137,9 @@
   .comments-section {
     max-height: 300px;
     overflow-y: auto;
+  }
+
+  .add-comment .comment-text-button{
+    flex: 1;
+    align-self: center;
   }

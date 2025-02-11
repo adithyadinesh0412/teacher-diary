@@ -97,6 +97,13 @@ const apiService = {
     },true);
     return res
   },
+  async translate(userData) {
+    const url = API_ENDPOINTS.TRANSLATE + `?actual_language=${userData.actual_language}&preferred_language=${userData.preferred_language}`
+    const res = await this.request(url,'PTD' , 'POST', {
+      post : userData.post
+    },true);
+    return res
+  },
 
   getProducts() {
     return this.request(API_ENDPOINTS.PRODUCTS);

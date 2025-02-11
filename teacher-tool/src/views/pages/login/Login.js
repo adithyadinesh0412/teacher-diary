@@ -54,6 +54,7 @@ const Login = () => {
       localStorage.setItem('authToken', response.result.access_token);
       localStorage.setItem('refreshToken', response.result.refresh_token);
       localStorage.setItem('name', response.result.user.name);
+      localStorage.setItem('preferred_language', response.result.user.preferred_language.label);
       localStorage.setItem('roles', response.result.user.user_roles.map(roles => roles.title));
 
       // Redirect the user to the dashboard or home page

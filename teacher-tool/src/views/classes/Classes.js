@@ -85,7 +85,7 @@ const Classes = () => {
   return (
     <div>
       <h1>Class List {' '}
-        <CButton color="success" onClick={handleAdd}>
+        <CButton color="light" onClick={handleAdd}>
           <CIcon icon={cilPlus} /> ADD
         </CButton>
       </h1>

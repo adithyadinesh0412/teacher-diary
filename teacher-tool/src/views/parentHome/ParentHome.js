@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { CCard, CCardBody, CCardText, CButton, CFormInput, CFormTextarea } from '@coreui/react';
 import './PostComponent.css';
 import CIcon from '@coreui/icons-react';
-import { cilShortText , cilThumbUp } from '@coreui/icons';
+import { cilShortText, cilThumbUp } from '@coreui/icons';
 // 
 const PostComponent = () => {
   const [posts, setPosts] = useState([]);
@@ -10,40 +10,33 @@ const PostComponent = () => {
   const [replyText, setReplyText] = useState('');
   const [activeReplyId, setActiveReplyId] = useState(null);
   const [visibleComments, setVisibleComments] = useState({});
+  const [fetchTrigger, setFetchTrigger] = useState(true);
+  const preferred_language = localStorage.getItem('preferred_language');
 
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const data = [
-          {
-            "id": 1,
-            "user": {
-              "name": "John Doe",
-              "profilePicture": "https://via.placeholder.com/40"
-            },
-            "timestamp": "2 hours ago",
-            "post": "This is a sample post.",
-            "comments": [
-              {
-                "id": 101,
-                "user": { "name": "Jane Doe" },
-                "text": "Nice post!",
-                "replies": [
-                  {
-                    "id": 201,
-                    "user": { "name": "John Doe" },
-                    "text": "Thanks!"
-                  }
-                ]
-              }
-            ]
+        const postLocal = localStorage.getItem('posts');
+        let data = JSON.parse(postLocal)
+        const userNameLocal = localStorage.getItem('name');
+        const showPost = data.data.map(async (eachPost) => {
+          if (eachPost.privacy == "Parent" && eachPost.target.includes(userNameLocal)) {
+            eachPost.timestamp = getTimeDifference(eachPost.createdAt)
+            eachPost.user.name = eachPost.user.name == userNameLocal ? "You" : eachPost.user.name
+            eachPost.post = await apiService.translate({
+              preferred_language,
+              actual_language : eachPost.language,
+              post : eachPost.post
+            })
+            return eachPost
           }
-        ];
-        setPosts(data);
-        
+        })
+        setPosts(showPost.filter((postt) => postt != null || postt != undefined));
+
+
         // Initialize visible comments for each post
         const initialVisibleComments = {};
-        data.forEach(post => {
+        data.data.forEach(post => {
           initialVisibleComments[post.id] = 2;
         });
         setVisibleComments(initialVisibleComments);
@@ -53,7 +46,25 @@ const PostComponent = () => {
     };
 
     fetchPosts();
+    if (fetchTrigger) {
+      fetchPosts();
+      setFetchTrigger(false)
+    };
   }, []);
+
+  const getTimeDifference = (createdAt) => {
+    const now = new Date();
+    const diffInMs = now - new Date(createdAt);
+    const diffInSeconds = Math.floor(diffInMs / 1000);
+    const diffInMinutes = Math.floor(diffInSeconds / 60);
+    const diffInHours = Math.floor(diffInMinutes / 60);
+    const diffInDays = Math.floor(diffInHours / 24);
+
+    if (diffInMinutes < 1) return "just now";
+    if (diffInMinutes < 60) return `${diffInMinutes} minutes ago`;
+    if (diffInHours < 24) return `${diffInHours} hours ago`;
+    return `${diffInDays} days ago`;
+  };
 
   const handleAddComment = (postId) => {
     const updatedPosts = posts.map((post) => {
@@ -65,8 +76,19 @@ const PostComponent = () => {
       }
       return post;
     });
-    setPosts(updatedPosts);
+    let tempPost = { data: updatedPosts }
+    tempPost = JSON.stringify(tempPost)
+    localStorage.setItem('posts', tempPost);
+
+    // setPosts(updatedPosts);
+    setFetchTrigger(true)
     setNewComment('');
+  };
+
+  const generateUUID = () => {
+    const newUUID = uuidv4();
+    console.log("Generated UUID:", newUUID);
+    return newUUID;
   };
   const toggleComments = (postId) => {
     const commentsSection = document.getElementById(`comments-section-${postId}`);
@@ -92,7 +114,10 @@ const PostComponent = () => {
       }
       return post;
     });
-    setPosts(updatedPosts);
+    let tempPost = { data: updatedPosts }
+    tempPost = JSON.stringify(tempPost)
+    localStorage.setItem('posts', tempPost);
+    setFetchTrigger(true)
     setReplyText('');
     setActiveReplyId(null);
   };
@@ -117,7 +142,7 @@ const PostComponent = () => {
                 className="profile-picture"
               />
               <div className="post-user-info">
-                <strong>{post.user.name}</strong>
+                <strong>{post?.user?.name}</strong>
                 <span className="post-time">{post.timestamp}</span>
               </div>
             </div>
@@ -127,13 +152,13 @@ const PostComponent = () => {
 
             {/* Action Buttons */}
             <div className="post-actions">
-            <CButton color="link">
-                  <CIcon icon={cilThumbUp} size="l" className="me-1" />
+              <CButton color="link">
+                <CIcon icon={cilThumbUp} size="l" className="me-1" />
               </CButton>
-            <CButton color="link">
-                  <CIcon icon={cilShortText} onClick={() => toggleComments(post.id)} size="l" className="me-1" />
+              <CButton color="link">
+                <CIcon icon={cilShortText} onClick={() => toggleComments(post.id)} size="l" className="me-1" />
               </CButton>
-              
+
               {/* <CIcon icon={cilShare} /> */}
             </div>
 
@@ -179,7 +204,7 @@ const PostComponent = () => {
                   ))}
                 </div>
               ))}
-              
+
               {/* View Previous Comments Button */}
               {post.comments.length > visibleComments[post.id] && (
                 <CButton

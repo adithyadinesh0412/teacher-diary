@@ -20,6 +20,7 @@ export const API_ENDPOINTS = {
     CLASSLIST : 'v1/classes/list',
     CREATECLASS : 'v1/classes/create',
     UPDATECLASS : 'v1/classes/update/',
+    TRANSLATE : 'v1/ai/translate',
   USERS: '/users',
   PRODUCTS: '/products',
   ORDERS: '/orders',
